@@ -1,10 +1,34 @@
 [
-	{ "id": 1, "name": "Duck", "species": "Bird", "difficulty": "3" },
-	{ "id": 2, "name": "Chicken", "species": "Bird", "difficulty": "3" },
-	{ "id": 3, "name": "Dinosaur", "species": "Other", "difficulty": "2" },
-	{ "id": 4, "name": "Whale", "species": "Aquatic", "difficulty": "1" },
-	{ "id": 5, "name": "Human 1", "species": "Human", "difficulty": "1" },
-	{ "id": 6, "name": "Human 2", "species": "Human", "difficulty": "1" },
-	{ "id": 7, "name": "Elephant", "species": "Big Mammal", "difficulty": "2" },
-	{ "id": 8, "name": "Koi", "species": "Aquatic", "difficulty": "1" }
+	{ "id": 1, "name": "Duck", "species": "Bird", "difficulty": 3 },
+	{
+		"id": 2,
+		"name": "Chicken",
+		"species": "Bird",
+		"difficulty": 3,
+		"video": "https://youtu.be/gyPCen9pOjo"
+	},
+	{
+		"id": 3,
+		"name": "Dinosaur",
+		"species": "Other",
+		"difficulty": 2,
+		"video": "https://youtu.be/hR6SwVgOZ6M"
+	},
+	{ "id": 4, "name": "Whale", "species": "Aquatic", "difficulty": 1 },
+	{
+		"id": 5,
+		"name": "Human 1",
+		"species": "Human",
+		"difficulty": 1,
+		"video": "https://youtu.be/-0RDfW7RCdk"
+	},
+	{
+		"id": 6,
+		"name": "Human 2",
+		"species": "Human",
+		"difficulty": 1,
+		"video": "https://youtu.be/wfPfuutRPWw"
+	},
+	{ "id": 7, "name": "Elephant", "species": "Big Mammal", "difficulty": 2 },
+	{ "id": 8, "name": "Koi", "species": "Aquatic", "difficulty": 1 }
 ]
