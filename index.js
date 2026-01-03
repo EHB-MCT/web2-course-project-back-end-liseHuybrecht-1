@@ -8,9 +8,13 @@ const bodyParser = require("body-parser");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { all } = require("axios");
-const uri =
-	"mongodb+srv://lihuybrecht_db_user:<db_password>@cluster0.rnhnurl.mongodb.net/?appName=Cluster0";
 
+//dotenv.config();
+
+const password = process.env.MONGODB_PASSWORD;
+const uri =
+	"mongodb+srv://lihuybrecht_db_user:<db.password>@cluster0.rnhnurl.mongodb.net/?appName=Cluster0";
+//${password}
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
 	serverApi: {
@@ -101,3 +105,50 @@ app.post("/addUser", async (req, res) => {
 });
 app.delete("/deleteUser", async (req, res) => {});
 //app.put;
+
+//TODO: Invoke rest API
+
+//const request = require("request");
+const { emit } = require("process");
+//define http request implementation in a separate file to handle request input and output //parameters
+async function getAcount(req, res) {
+	let body = req.body;
+	let options = {
+		hostname: "http: //sampleservice.com/",
+		path: "/allAcounts",
+		method: "GET",
+	};
+	let result = await request(options);
+	res.send(); // or return specific parameter value in JSON format
+}
+async function UpdateAcount(req, res) {
+	let body = req.body;
+	let details = {
+		id: body.id,
+		userNumber: body.userNumber,
+		firstName: body.firstName,
+		lastName: body.lastName,
+		email: body.email,
+		password: body.password,
+	};
+	let options = {
+		hostname: "http: //easy-animals.onrender.com/info.html",
+		path:
+			"/acounts?" +
+			new params({
+				id,
+				userNumber,
+				firstName,
+				lastName,
+				email,
+				password,
+			}),
+		method: "POST",
+	};
+	let result = await request(options, details);
+	res.json({
+		id: body.id,
+		name: body.name,
+		title: body.title,
+	});
+}

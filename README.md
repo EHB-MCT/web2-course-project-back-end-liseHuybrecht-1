@@ -28,3 +28,74 @@ Have a look at the example repository: https://github.com/EHB-MCT/example-readme
 
 https://www.w3schools.com/git/git_ignore.asp
 https://www.youtube.com/watch?v=JAFhwfyYEb4
+https://www.w3schools.com/CSS/css_howto.asp#gsc.tab=0
+https://www.c-sharpcorner.com/article/invoke-rest-apis-in-express-js/
+https://www.mongodb.com/resources/languages/mongodb-and-npm-tutorial
+
+https://chatgpt.com/
+
+"mongodb+srv://lihuybrecht_db_user:<db_password>@databbasecluedo.qbbbey5.mongodb.net/?appName=databbasecluedo"; how to change password without actually changing it here
+
+You don’t change the password inside the connection string.
+Instead, you store the password somewhere else (environment variables or config) and reference it.
+
+Here are the correct and safe ways to do it.
+
+✅ Best practice: Use environment variables
+
+1. Set the password as an environment variable
+
+macOS / Linux (terminal):
+
+export MONGODB_PASSWORD="your_real_password"
+
+Windows (PowerShell):
+
+setx MONGODB_PASSWORD "your_real_password"
+
+2. Use it in your MongoDB connection string
+
+JavaScript / Node.js example:
+
+const password = process.env.MONGODB_PASSWORD;
+
+const uri = `mongodb+srv://lihuybrecht_db_user:${password}@databbasecluedo.qbbbey5.mongodb.net/?appName=databbasecluedo`;
+
+Now your password is not hardcoded and not visible in your code or GitHub.
+
+✅ Using a .env file (very common)
+
+1. Create a .env file (DO NOT commit it)
+   MONGODB_PASSWORD=your_real_password
+
+Add this to .gitignore:
+
+.env
+
+2. Load it in your app
+   import dotenv from "dotenv";
+   dotenv.config();
+
+const uri = `mongodb+srv://lihuybrecht_db_user:${process.env.MONGODB_PASSWORD}@databbasecluedo.qbbbey5.mongodb.net/?appName=databbasecluedo`;
+
+❌ What NOT to do
+
+❌ Don’t put the password directly in the URI
+
+❌ Don’t commit credentials to GitHub
+
+❌ Don’t share full connection strings publicly
+
+🔐 If you actually want to rotate (change) the password
+
+You do that in MongoDB Atlas → Database Access → Edit User, then update the environment variable — not the code.
+
+If you tell me:
+
+what language you’re using (Node, Python, Java, etc.)
+
+and whether this is local or deployed (Vercel, Render, Railway, etc.)
+
+I’ll give you a copy-paste setup tailored exactly to your project.
+
+Lin de Huybrecht

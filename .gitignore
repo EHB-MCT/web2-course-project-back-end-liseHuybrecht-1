@@ -1,3 +1,5 @@
 acounts.json
 usibleNotes
 node_modules
+mongoDBPassword
+password.env
