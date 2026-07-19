@@ -3,7 +3,8 @@ const { log } = require("console");
 const express = require("express");
 const fs = require("fs/promises");
 const app = express();
-const port = 3000;
+require("dotenv").config();
+const port = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -45,7 +46,11 @@ app.use(express.static("publicFolder"));
 app.use(bodyParser.json());
 
 app.listen(port, () => {
-	console.log(`app listening on port http://localhost:${port}`);
+	console.log(`app listening on port http://dt5.ehb.be:${port}`);
+	console.log(port);
+	console.log(`GET /acounts - Get all acounts`);
+	console.log(` MONGO_URI: ${process.env.MONGO_URI}`);
+	console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
 app.get("/", async (req, res) => {
@@ -99,6 +104,15 @@ app.post("/addUser", async (req, res) => {
 	};
 	console.log(data);
 
+	//const hashedPassword = await bcrypt.hash(password, 10)
+
+	//const newUser = {
+	//id: Date.now().toSTring(),
+	//name,
+	//email,
+	//password: hashedPassword,
+	//Profileficture: }
+
 	await fs.writeFile("acounts.json", JSON.stringify(data));
 
 	res.status(201).send("upload succesful");
@@ -135,7 +149,7 @@ async function UpdateAcount(req, res) {
 		hostname: "http: //easy-animals.onrender.com/info.html",
 		path:
 			"/acounts?" +
-			new params({
+			new Params({
 				id,
 				userNumber,
 				firstName,
