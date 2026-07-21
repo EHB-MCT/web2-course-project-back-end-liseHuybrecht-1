@@ -4,7 +4,7 @@ const express = require("express");
 const fs = require("fs/promises");
 const app = express();
 require("dotenv").config();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -46,7 +46,7 @@ app.use(express.static("publicFolder"));
 app.use(bodyParser.json());
 
 app.listen(port, () => {
-	console.log(`app listening on port http://dt5.ehb.be:${port}`);
+	console.log(`app listening on port https://easy-animals.onrender.com`);
 	console.log(port);
 	console.log(`GET /acounts - Get all acounts`);
 	console.log(` MONGO_URI: ${process.env.MONGO_URI}`);

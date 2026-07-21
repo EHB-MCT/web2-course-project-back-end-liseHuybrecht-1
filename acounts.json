@@ -1,0 +1,23 @@
+[
+	{
+		"id": 0,
+		"firstName": "name",
+		"lastName": "lastname",
+		"email": "e-mail.mail@service.com",
+		"password": "password"
+	},
+	{
+		"id": 1,
+		"firstName": "name",
+		"lastName": "lastname",
+		"email": "e-mail.mail@service.com",
+		"password": "password"
+	},
+	{
+		"id": 2,
+		"firstName": "Something",
+		"lastName": "Words",
+		"email": "my.mail@email.com",
+		"password": "secretPassword"
+	}
+]
