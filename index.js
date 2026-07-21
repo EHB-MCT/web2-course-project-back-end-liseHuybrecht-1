@@ -123,7 +123,7 @@ app.delete("/deleteUser", async (req, res) => {});
 
 //const request = require("request");
 const { emit } = require("process");
-const { use } = require("react");
+//const { use } = require("react");
 //define http request implementation in a separate file to handle request input and output //parameters
 async function getAcount(req, res) {
 	let body = req.body;
