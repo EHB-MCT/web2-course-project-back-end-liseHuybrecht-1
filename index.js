@@ -81,12 +81,12 @@ app.get("/allAcounts", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
 	if (
-		!req.body.id == false ||
-		!req.body.userNumber == false ||
-		!req.body.firstName == false ||
-		!req.body.lastName == false ||
-		!req.body.email == false ||
-		!req.body.password == false
+		!req.body.id == true ||
+		!req.body.userNumber == true ||
+		!req.body.firstName == true ||
+		!req.body.lastName == true ||
+		!req.body.email == true ||
+		!req.body.password == true
 	) {
 		res.status(400).send("missing info");
 	}
