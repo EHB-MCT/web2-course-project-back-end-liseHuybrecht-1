@@ -84,9 +84,9 @@ app.post("/addUser", async (req, res) => {
 		const { id, firstName, lastName, email, password } = req.body;
 
 		if (!firstName || !lastName || !email || !password) {
-			return res
-				.status(400)
-				.json({ error: "firstname, lastname, email and password required" });
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			req.status(400).send("missing info");
 		}
 
 		const users = await readUsers();
@@ -109,10 +109,12 @@ app.post("/addUser", async (req, res) => {
 		await writeUsers(users);
 
 		const { password: _, ...userWithoutPassword } = newUser;
-		res.status(201).json(userWithoutPassword);
+		res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
 		console.log("Error, unable to create new user");
-		res.status(500).json({ error: "failed to create new user" });
+		//res.status(500).json({ error: "failed to create new user" });
+		res.status(500).send("Failed to upload new user");
 	}
 });
 
