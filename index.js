@@ -81,12 +81,12 @@ app.get("/allAcounts", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
 	if (
-		!req.body.id ||
-		!req.body.userNumber ||
-		!req.body.firstName ||
-		!req.body.lastName ||
-		!req.body.email ||
-		!req.body.password
+		!req.body.id == false ||
+		!req.body.userNumber == false ||
+		!req.body.firstName == false ||
+		!req.body.lastName == false ||
+		!req.body.email == false ||
+		!req.body.password == false
 	) {
 		res.status(400).send("missing info");
 	}
@@ -116,7 +116,9 @@ app.post("/addUser", async (req, res) => {
 	await fs.writeFile("acounts.json", JSON.stringify(data));
 
 	res.status(201).send("upload succesful");
+	res.send(data);
 });
+
 app.delete("/deleteUser", async (req, res) => {});
 //app.put;
 
