@@ -1,0 +1,150 @@
+That's actually a very important clue.
+
+If node_modules/mongodb/lib/runtime_adapters.js does not exist after a fresh install, then one of two things is happening:
+
+You're not actually installing the version of mongodb that connection_string.js expects. In other words, files from two different versions are getting mixed together.
+The published package version you're resolving to is broken (less likely, but it has happened with npm packages). Recent MongoDB driver releases introduced runtimeAdapters, so mismatched files can produce exactly this kind of error.
+The next thing I'd like you to check
+
+Run:
+
+npm ls mongodb
+
+and also:
+
+npm ls bson
+
+Then paste the output.
+
+Also tell me what this says:
+
+cat node_modules/mongodb/package.json
+
+Specifically, I want to see the "version" field.
+
+One more thing
+
+Please paste your package.json dependencies section.
+
+I'm looking for something like:
+
+"mongodb": "^6.16.0"
+
+or
+
+"mongoose": "^8.12.0"
+
+or both.
+
+I suspect a version mismatch
+
+For example, if connection_string.js contains:
+
+require("./runtime_adapters")
+
+but runtime_adapters.js isn't in the package, then the install is internally inconsistent. That usually means the package contents don't match the version you're expecting.
+
+Once I know:
+
+the installed mongodb version,
+whether you're using mongoose or the MongoDB driver directly,
+and your dependencies,
+
+I can tell you the exact fix rather than guessing.
+
+mongodb@7.5.0, bson@7.3.1, dependencies": {
+"@mongodb-js/saslprep": "^1.4.11",
+"bson": "^7.2.0",
+"mongodb-connection-string-url": "^7.0.1"
+},
+"peerDependencies": {
+"@aws-sdk/credential-providers": "^3.806.0",
+"@mongodb-js/zstd": "^7.0.0",
+"gcp-metadata": "^7.0.1",
+"kerberos": "^7.0.0",
+"mongodb-client-encryption": "^7.2.0",
+"snappy": "^7.3.2",
+"socks": "^2.8.6"
+},
+"peerDependenciesMeta": {
+"@aws-sdk/credential-providers": {
+"optional": true
+
+I think we've found the culprit.
+
+You're using mongodb@7.5.0, which was published very recently. The MongoDB 7.x driver introduced the new runtimeAdapters feature, so connection_string.js now references it.
+
+However, that file is missing from your installed package.
+
+That should never happen in a healthy installation. It strongly suggests one of these:
+
+a bad/corrupted npm package was installed,
+npm's cache is serving incomplete contents,
+or there's a packaging issue with that specific release.
+I'd try this first
+
+Downgrade to the last stable 6.x driver:
+
+npm install mongodb@6.20.0
+
+or, if you're okay staying on 7.x but avoiding the newest release:
+
+npm install mongodb@7.4.0
+
+Then commit the updated package.json and package-lock.json and redeploy.
+
+Also pin your Node version
+
+Since Render is using Node 22 now, add this to package.json:
+
+"engines": {
+"node": "20.x"
+}
+
+or "18.x" if that's what you've been developing with.
+
+One thing I'd like to verify
+
+Could you paste the first 25 lines of:
+
+node_modules/mongodb/lib/connection_string.js
+
+especially around line 19 where it imports runtime_adapters.
+
+And one more question:
+
+Are you using npm, pnpm, or yarn?
+
+That will help determine whether this is an npm resolution issue or a package publication issue.
+
+npm install mongodb@7.4.0, i did this. it worked. thank you
+
+Excellent—that narrows it down.
+
+The fact that 7.4.0 works but 7.5.0 doesn't strongly suggests the issue is with the mongodb@7.5.0 package (or how it was published), rather than your application or Render.
+
+A few recommendations to avoid this happening again:
+
+Commit both package.json and package-lock.json after downgrading.
+
+Pin the version instead of using a broad caret range if you want predictable deployments. For example:
+
+"mongodb": "7.4.0"
+
+instead of:
+
+"mongodb": "^7.4.0"
+
+Using ^ allows npm to install newer 7.x releases automatically.
+
+Pin your Node version in package.json as well:
+
+"engines": {
+"node": "20.x"
+}
+
+(or 18.x if that's what you use locally). This helps keep Render's environment consistent over time.
+
+The nice thing here is that your observation that older commits also stopped deploying was a valuable clue. It pointed away from your code and toward a dependency or environment change, which is exactly where the problem turned out to be.
+
+I'm glad you got it deploying again!
