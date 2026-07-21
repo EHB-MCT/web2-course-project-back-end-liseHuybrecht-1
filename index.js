@@ -69,7 +69,7 @@ app.get("/acounts", async (req, res) => {
 	const buffer = await fs.readFile("acounts.json");
 	const data = JSON.parse(buffer);
 
-	res.send(data[req.query.id]);
+	//res.send(data[req.query.id]);
 });
 
 app.get("/allAcounts", async (req, res) => {
