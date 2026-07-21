@@ -3,3 +3,4 @@ usibleNotes
 node_modules
 mongoDBPassword
 password.env
+.env

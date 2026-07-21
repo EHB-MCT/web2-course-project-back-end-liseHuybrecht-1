@@ -67,3 +67,41 @@ app.post("/addUser", async (req, res) => {
 });
 app.delete("/deleteUser", async (req, res) => {});
 app.put;
+
+//TODO: used to be in app.post
+/*if (
+		!req.body.id ||
+		!req.body.firstName ||
+		!req.body.lastName ||
+		!req.body.email ||
+		!req.body.password
+	) {
+		res.status(400).send("missing info");
+	}
+
+	const buffer = await fs.readFile("acounts.json");
+	const data = JSON.parse(buffer);
+
+	data[req.body.id] = {
+		id: Date.now().toString,
+		userNumber: req.body.userNumber,
+		firstName: req.body.firstName,
+		lastName: req.body.lastName,
+		email: req.body.email,
+		password: req.body.password,
+	};
+	console.log(data);
+
+	//const hashedPassword = await bcrypt.hash(password, 10)
+
+	//const newUser = {
+	//id: Date.now().toSTring(),
+	//name,
+	//email,
+	//password: hashedPassword,
+	//Profileficture: }
+
+	await fs.writeFile("acounts.json", JSON.stringify(data));
+
+	res.status(201).send("upload succesful");
+*/
