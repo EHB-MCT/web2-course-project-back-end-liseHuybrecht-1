@@ -95,7 +95,6 @@ app.post("/addUser", async (req, res) => {
 
 	data[req.body.id] = {
 		id: Date.now().toString,
-		userNumber: req.body.userNumber,
 		firstName: req.body.firstName,
 		lastName: req.body.lastName,
 		email: req.body.email,
