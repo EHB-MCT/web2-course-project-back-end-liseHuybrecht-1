@@ -116,7 +116,6 @@ app.post("/addUser", async (req, res) => {
 	await fs.writeFile("acounts.json", JSON.stringify(data));
 
 	res.status(201).send("upload succesful");
-	res.send(data);
 });
 
 app.delete("/deleteUser", async (req, res) => {});
