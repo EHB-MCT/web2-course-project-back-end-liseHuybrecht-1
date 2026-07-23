@@ -94,7 +94,8 @@ app.post("/addUser", async (req, res) => {
 	const data = JSON.parse(buffer);
 
 	data[req.body.id] = {
-		id: Date.now().toString,
+		//id: Date.now().toString,
+		id: req.body.id,
 		firstName: req.body.firstName,
 		lastName: req.body.lastName,
 		email: req.body.email,
@@ -115,7 +116,7 @@ app.post("/addUser", async (req, res) => {
 
 	res.status(201).send("upload succesful");
 
-	users.push(newUser);
+	users.push(data);
 	await writeUsers(users);
 });
 
