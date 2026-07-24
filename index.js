@@ -81,10 +81,30 @@ app.get("/allAcounts", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
 	try {
-		const { reqBody } = req.body;
-		const newUser = { id: Date.toString, firstName, lastName, email, password };
-		addUser.push(newUser);
-		res.status(201).json(newUser);
+		if (
+			!req.body.id ||
+			!req.body.firstName ||
+			!req.body.lastName ||
+			!req.body.email ||
+			!req.body.password
+		) {
+			res.status(400).send("missing info");
+		}
+
+		const buffer = await fs.readFile("acounts.json");
+		const data = JSON.parse(buffer);
+
+		data[req.body] = {
+			id: req.body.id,
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			email: req.body.email,
+			password: req.body.password,
+		};
+
+		await fs.writeFile("acounts.json", JSON.stringify(data));
+
+		res.status(201).send("upload succesful");
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });

@@ -186,3 +186,16 @@ app.put;
 });
 
 app.delete("/deleteUser", async (req, res) => {});
+
+//TODO: New attempt
+ try {
+		const { reqBody } = req.body;
+		const newUser = { id: Date.toString, firstName, lastName, email, password };
+		items.push(newUser);
+		res.status(201).json(newUser);
+	} catch (error) {
+		console.log("Error, unable to create new user");
+		//res.status(500).json({ error: "failed to create new user" });
+		res.status(500).send("Failed to upload new user");
+	}
+	https://www.geeksforgeeks.org/node-js/rest-api-using-the-express-to-perform-crud-create-read-update-delete/
