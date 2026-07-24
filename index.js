@@ -108,7 +108,7 @@ app.post("/addUser", async (req, res) => {
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });
-		res.status(500).send("Failed to upload new user");
+		res.status(500).send("Failed to upload new user", error);
 	}
 });
 //app.put;
