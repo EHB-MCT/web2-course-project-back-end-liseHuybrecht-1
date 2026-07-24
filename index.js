@@ -80,47 +80,43 @@ app.get("/allAcounts", async (req, res) => {
 });
 
 app.post("/addUser", async (req, res) => {
-	if (
-		!req.body.id ||
-		!req.body.firstName ||
-		!req.body.lastName ||
-		!req.body.email ||
-		!req.body.password
-	) {
-		res.status(400).send("missing info");
+	try {
+		const { id, firstName, lastName, email, password } = req.body;
+
+		if (!firstName || !lastName || !email || !password) {
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			req.status(400).send("missing info");
+		}
+
+		const users = await readUsers();
+
+		if (users.some((u) => u.email === email)) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const newUser = {
+			id: Date.now().toString,
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		};
+
+		users.push(newUser);
+		await writeUsers(users);
+
+		const { password: _, ...userWithoutPassword } = newUser;
+		res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.log("Error, unable to create new user");
+		//res.status(500).json({ error: "failed to create new user" });
+		res.status(500).send("Failed to upload new user");
 	}
-
-	const buffer = await fs.readFile("acounts.json");
-	const data = JSON.parse(buffer);
-
-	data[req.body.id] = {
-		//id: Date.now().toString,
-		id: req.body.id,
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		email: req.body.email,
-		password: req.body.password,
-	};
-	console.log(data);
-
-	//const hashedPassword = await bcrypt.hash(password, 10)
-
-	//const newUser = {
-	//id: Date.now().toSTring(),
-	//name,
-	//email,
-	//password: hashedPassword,
-	//Profileficture: }
-
-	await fs.writeFile("acounts.json", JSON.stringify(data));
-
-	res.status(201).send("upload succesful");
-
-	//data.push(data);
-	await writeUsers(data);
 });
-
-app.delete("/deleteUser", async (req, res) => {});
 //app.put;
 
 //TODO: Invoke rest API
