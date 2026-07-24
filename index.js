@@ -77,7 +77,6 @@ app.get("/allAcounts", async (req, res) => {
 	const data = JSON.parse(buffer);
 
 	res.send(data);
-	console.log("PORT:", process.env.PORT);
 });
 
 app.post("/addUser", async (req, res) => {
@@ -110,6 +109,7 @@ app.post("/addUser", async (req, res) => {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });
 		res.status(500).send("Failed to upload new user");
+		console.log("PORT:", process.env.PORT);
 	}
 });
 //app.put;
