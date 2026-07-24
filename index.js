@@ -81,36 +81,10 @@ app.get("/allAcounts", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
 	try {
-		const { id, firstName, lastName, email, password } = req.body;
-
-		if (!firstName || !lastName || !email || !password) {
-			//return res.status(400);
-			//.json({ error: "firstname, lastname, email and password required" });
-			req.status(400).send("missing info");
-		}
-
-		const users = await readUsers();
-
-		if (users.some((u) => u.email === email)) {
-			return res.status(409).json({ error: "Email already exists" });
-		}
-
-		const hashedPassword = await bcrypt.hash(password, 10);
-
-		const newUser = {
-			id: Date.now().toString,
-			firstName,
-			lastName,
-			email,
-			password: hashedPassword,
-		};
-
-		users.push(newUser);
-		await writeUsers(users);
-
-		const { password: _, ...userWithoutPassword } = newUser;
-		res.status(201).send("upload succesful");
-		//res.status(201).json(userWithoutPassword);
+		const { reqBody } = req.body;
+		const newUser = { id: Date.toString, firstName, lastName, email, password };
+		addUser.push(newUser);
+		res.status(201).json(newUser);
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });
