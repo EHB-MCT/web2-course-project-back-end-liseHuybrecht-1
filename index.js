@@ -4,7 +4,7 @@ const express = require("express");
 const fs = require("fs/promises");
 const app = express();
 require("dotenv").config();
-const port = process.env.PORT || 10000;
+const port = process.env.PORT || "0.0.0.0";
 const bodyParser = require("body-parser");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
