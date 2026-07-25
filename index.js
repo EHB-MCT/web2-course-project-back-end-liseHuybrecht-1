@@ -86,7 +86,7 @@ app.get("/allAcounts", async (req, res) => {
 		//const data = JSON.parse(buffer);
 
 		//res.send(data);
-		const accounts = client
+		const accounts = await client
 			.db("allAcounts")
 			.collection("acounts")
 			.find({}).toArray;
