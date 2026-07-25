@@ -17,6 +17,7 @@ const { all } = require("axios");
 //mongoose.connect(process.env.MONGODB_URI);
 
 const password = process.env.MONGODB_PASSWORD;
+console.log(password);
 
 const URI = process.env.MONGODB_URI;
 
