@@ -73,10 +73,19 @@ app.get("/acounts", async (req, res) => {
 });
 
 app.get("/allAcounts", async (req, res) => {
-	//const buffer = await fs.readFile("acounts.json");
-	const data = JSON.parse(buffer);
+	try {
+		await client.connect();
+		//const buffer = await fs.readFile("acounts.json");
+		//const data = JSON.parse(buffer);
 
-	res.send(data);
+		//res.send(data);
+
+		res.status(200).send(JSON.parse(data));
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	}
 });
 
 app.post("/addUser", async (req, res) => {
