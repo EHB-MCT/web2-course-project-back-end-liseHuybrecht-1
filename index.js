@@ -56,7 +56,7 @@ app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
 	console.log(port);
 	console.log(`GET /acounts - Get all acounts`);
-	console.log(` MONGO_URI: ${process.env.MONGO_URI}`);
+	console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
 	console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
@@ -86,8 +86,12 @@ app.get("/allAcounts", async (req, res) => {
 		//const data = JSON.parse(buffer);
 
 		//res.send(data);
+		const accounts = client
+			.db("Cluster0")
+			.collection("allAcounts")
+			.find({}).toArray;
 
-		res.status(200).send(JSON.parse(data));
+		res.status(200).send(JSON.parse(accounts));
 	} catch (error) {
 		console.log(error);
 

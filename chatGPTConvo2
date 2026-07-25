@@ -1,0 +1,177 @@
+This is progress—you've gotten past the connection string issues. Now your app is reaching MongoDB Atlas, but Atlas is rejecting the login.
+
+The error:
+
+MongoServerError: bad auth : Authentication failed.
+
+means one of these is wrong:
+
+Username
+Password
+Connection string
+Database user doesn't exist or doesn't have access
+Check your connection string
+
+It should look similar to:
+
+mongodb+srv://<username>:<password>@cluster0.rnhnurl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+If your username is an email address, the @ must be URL-encoded:
+
+li.huybrecht%40ehb.be
+
+instead of
+
+li.huybrecht@ehb.be
+Check your password
+Make sure it's the MongoDB Atlas database user's password, not your Atlas account password.
+If it contains special characters like @, :, /, ?, #, or %, it must be URL-encoded. An easy way is:
+const password = encodeURIComponent(process.env.DB_PASSWORD);
+
+Or simply copy the encoded connection string from Atlas.
+
+Verify the database user
+
+In MongoDB Atlas:
+
+Go to Database Access.
+Confirm the user exists.
+If you're unsure of the password, click Edit and set a new one.
+Update the password in your Render environment variables.
+Redeploy your service.
+Verify your Render environment variable
+
+Ensure MONGODB_URI contains the updated connection string exactly as intended. A common mistake is changing the password in Atlas but forgetting to update it in Render.
+
+Verify network access
+
+Although a network issue usually produces a different error, it's worth checking:
+
+In Atlas, go to Network Access.
+Make sure Render's IPs are allowed, or temporarily allow 0.0.0.0/0 for testing (then restrict access later if appropriate).
+The quickest way to diagnose
+
+Please paste your connection string with the password hidden, for example:
+
+mongodb+srv://li.huybrecht%40ehb.be:**\*\***@cluster0.rnhnurl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+Also tell me:
+
+Are you using your Atlas login email as the username, or a Database Access user?
+Does your username in Database Access literally contain @ehb.be?
+
+Those details will help determine whether the issue is with the credentials or the connection string.
+
+const password = process.env.MONGODB_PASSWORD;. this doesnt link back to the password. what exactly do i need to do to make this defined instead of undefined
+
+process.env.MONGODB_PASSWORD doesn't automatically "link" to anything. It only has a value if you've defined an environment variable named MONGODB_PASSWORD.
+
+Option 1 (recommended): Use a single MONGODB_URI
+
+This is the simplest approach.
+
+In Render, create an environment variable:
+
+Key: MONGODB_URI
+Value: mongodb+srv://username:password@cluster0.rnhnurl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+Then in your code:
+
+const { MongoClient } = require("mongodb");
+
+const client = new MongoClient(process.env.MONGODB_URI);
+
+No need for a separate MONGODB_PASSWORD variable.
+
+Option 2: Store the password separately
+
+If you want to build the URI in code, then you must define the password in Render.
+
+In Render → Environment, add:
+
+Key: MONGODB_PASSWORD
+Value: yourActualPassword
+
+Then this works:
+
+const password = encodeURIComponent(process.env.MONGODB_PASSWORD);
+
+const uri = `mongodb+srv://li.huybrecht%40ehb.be:${password}@cluster0.rnhnurl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const client = new MongoClient(uri);
+
+If process.env.MONGODB_PASSWORD is undefined, it means Render doesn't have an environment variable with that exact name.
+
+How to check
+
+Add:
+
+console.log(process.env.MONGODB_PASSWORD);
+
+If it prints:
+
+undefined
+
+then the environment variable is missing or has a different name.
+
+I can help you pinpoint it
+
+Please paste:
+
+Your index.js lines 20–30 (or wherever you create the MongoClient).
+A screenshot (or list) of your Render Environment variables, with the actual password hidden.
+
+That will make it possible to identify exactly why process.env.MONGODB_PASSWORD is undefined.
+
+==> Deploying...
+==> Running 'node index.js'
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Pinged your deployment. You successfully connected to MongoDB!
+==> Application exited early
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'node index.js'
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Pinged your deployment. You successfully connected to MongoDB!. it doesnt give error but it doesnt work either
+
+The important line is:
+
+Pinged your deployment. You successfully connected to MongoDB!
+
+That means your MongoDB connection is working.
+
+The problem is this:
+
+==> Application exited early
+
+On Render, a web service must keep running by listening on a port. If your program connects to MongoDB, prints a message, and then finishes, Render considers it crashed because there's no server process left running.
+
+Check whether you're starting your server
+
+You should have something like:
+
+const express = require("express");
+const app = express();
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+console.log(`Server listening on port ${PORT}`);
+});
+
+If you're missing app.listen(...), your application will exit after it finishes executing.
+
+If you're not building a web server
+
+If your application is just a script (for example, it imports data into MongoDB and exits), then it shouldn't be deployed as a Render Web Service. Instead, you should use:
+
+a Background Worker, or
+a Cron Job, depending on what the script does.
+Please share
+
+Could you paste your index.js (or at least the last 30–40 lines)? In particular, I want to see:
+
+where you connect to MongoDB,
+whether you're using Express,
+whether you call app.listen(...).
+
+That will make it clear why the process exits immediately.
