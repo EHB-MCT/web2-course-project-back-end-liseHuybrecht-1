@@ -10,12 +10,6 @@ const bodyParser = require("body-parser");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { all } = require("axios");
 
-//dotenv.config();
-
-//const mongoose = require("mongoose");
-
-//mongoose.connect(process.env.MONGODB_URI);
-
 const password = process.env.MONGODB_PASSWORD;
 
 const URI = process.env.MONGODB_URI;
@@ -49,8 +43,8 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.use(express.static("publicFolder"));
-app.use(bodyParser.json());
+//app.use(express.static("publicFolder"));
+//app.use(bodyParser.json());
 
 app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
@@ -60,32 +54,25 @@ app.listen(port, () => {
 	console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
-app.get("/", async (req, res) => {
-	try {
-		res.redirect("/info.html");
-		//console.log("hello");
-		//res.send("hello");
-
-		const buffer = await fs.readFile("", { encode: "utf8" });
-	} catch (error) {
-		res.status(500).send("Server error, try again later");
-	}
-});
-
 app.get("/acounts", async (req, res) => {
-	const buffer = await fs.readFile("acounts.json");
-	const data = JSON.parse(buffer);
+	try {
+		await client.connect();
 
-	res.send(data[req.query.firstName]);
+		const collection = client.db("allAcounts").collection("acounts");
+		const accounts = await collection.find(firstName).toArray();
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	}
 });
 
 app.get("/allAcounts", async (req, res) => {
 	try {
 		await client.connect();
-		//const buffer = await fs.readFile("acounts.json");
-		//const data = JSON.parse(buffer);
 
-		//res.send(data);
 		const collection = client.db("allAcounts").collection("acounts");
 		const accounts = await collection.find({}).toArray();
 
@@ -94,9 +81,7 @@ app.get("/allAcounts", async (req, res) => {
 		console.log(error);
 
 		res.status(500).send({ error: "Could not get all accounts", value: error });
-	} /*finally {
-		await client.close();
-	}*/
+	}
 });
 
 app.post("/addUser", async (req, res) => {
@@ -134,55 +119,39 @@ app.post("/addUser", async (req, res) => {
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });
-		res.status(500).send("Failed to upload new user");
+		res.status(500).send({ error: "Failed to upload new user", value: error });
 	}
 });
-//app.put;
 
-//TODO: Invoke rest API
+app.put("/updateAccount", async (req, res) => {
+	try {
+		const { id, firstName, lastName, email, password } = req.body;
 
-//const request = require("request");
-const { emit } = require("process");
-//const { use } = require("react");
-//define http request implementation in a separate file to handle request input and output //parameters
-async function getAcount(req, res) {
-	let body = req.body;
-	let options = {
-		hostname: "http: //sampleservice.com/",
-		path: "/allAcounts",
-		method: "GET",
-	};
-	let result = await request(options);
-	res.send(); // or return specific parameter value in JSON format
-}
-async function UpdateAcount(req, res) {
-	let body = req.body;
-	let details = {
-		id: body.id,
-		userNumber: body.userNumber,
-		firstName: body.firstName,
-		lastName: body.lastName,
-		email: body.email,
-		password: body.password,
-	};
-	let options = {
-		hostname: "http: //easy-animals.onrender.com/info.html",
-		path:
-			"/acounts?" +
-			new Params({
-				id,
-				userNumber,
-				firstName,
-				lastName,
-				email,
-				password,
-			}),
-		method: "POST",
-	};
-	let result = await request(options, details);
-	res.json({
-		id: body.id,
-		name: body.name,
-		title: body.title,
-	});
-}
+		const users = await readUsers();
+
+		if (users.some((u) => u.email === email)) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const newUser = {
+			id: Date.now().toString,
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		};
+
+		users.push(newUser);
+		await writeUsers(users);
+
+		const { password: _, ...userWithoutPassword } = newUser;
+		res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.log("Error, unable to create new user");
+		//res.status(500).json({ error: "failed to create new user" });
+		res.status(500).send({ error: "Failed to upload new user", value: error });
+	}
+});
