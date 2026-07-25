@@ -16,10 +16,10 @@ const { all } = require("axios");
 
 //mongoose.connect(process.env.MONGODB_URI);
 
-const password = env.MONGODB_PASSWORD;
+const password = process.env.MONGODB_PASSWORD;
 console.log(password);
 
-const URI = env.MONGODB_URI;
+const URI = process.env.MONGODB_URI;
 console.log(URI);
 
 const uri = `mongodb+srv://lihuybrecht_db_user:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0`;
