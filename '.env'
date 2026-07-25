@@ -1,6 +1,0 @@
-
-
-MONGO_URI= `mongodb+srv://li.huybrecht@student.ehb.be:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0`
-
-MONGODB_PASSWORD=6Zuy*D-f5,PKzu]J
-password=6Zuy*D-f5,PKzu]J
