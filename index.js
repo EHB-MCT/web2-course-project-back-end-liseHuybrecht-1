@@ -95,13 +95,20 @@ app.post("/addUser", async (req, res) => {
 			return res.status(400).send("missing info");
 		}
 
-		const users = await readUsers();
-		console.log(users);
-		
+		const collection = client.db("allAcounts").collection("acounts");
 
-		if (users.some((u) => u.email === email)) {
+		const existingUsers = await userCollection.findOne({ email });
+
+		if (existingUsers) {
 			return res.status(409).json({ error: "Email already exists" });
 		}
+
+		await userCollection.insertOne({
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		});
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 

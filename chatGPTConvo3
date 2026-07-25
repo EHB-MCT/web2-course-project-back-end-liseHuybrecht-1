@@ -1,0 +1,182 @@
+TypeError [ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received function toArray
+    at Function.from (node:buffer:325:9)
+    at ServerResponse.send (/opt/render/project/src/node_modules/express/lib/response.js:182:22)
+    at /opt/render/project/src/index.js:92:19
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+app.get("/allAcounts", async (req, res) => {
+	try {
+		await client.connect();
+		//const buffer = await fs.readFile("acounts.json");
+		//const data = JSON.parse(buffer);
+
+		//res.send(data);
+		const getDB = await client.db("allAcounts").collection("acounts");
+		const accounts = getDB.find({}).toArray;
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	} finally {
+		await client.close;
+	}
+});
+
+The error is caused by this line:
+
+const accounts = getDB.find({}).toArray;
+
+You're assigning the toArray function itself, not calling it. Then Express tries to send a function:
+
+res.send(accounts); // accounts is a function
+
+res.send() internally calls Buffer.from() for some values, which is why you get:
+
+TypeError [ERR_INVALID_ARG_TYPE]
+Received function toArray
+Fix
+
+Call toArray() with parentheses and await it:
+
+app.get("/allAcounts", async (req, res) => {
+  try {
+    await client.connect();
+
+    const collection = client.db("allAcounts").collection("acounts");
+    const accounts = await collection.find({}).toArray();
+
+    res.status(200).send(accounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      error: "Could not get all accounts",
+      value: error.message,
+    });
+  } finally {
+    await client.close();
+  }
+});
+There's another bug
+
+In your finally block you have:
+
+await client.close;
+
+This also isn't calling the function. It should be:
+
+await client.close();
+One more recommendation
+
+It's generally not recommended to connect and close MongoDB for every request. Instead:
+
+await client.connect(); // once when the server starts
+
+app.get("/allAcounts", async (req, res) => {
+  try {
+    const accounts = await client
+      .db("allAcounts")
+      .collection("acounts")
+      .find({})
+      .toArray();
+
+    res.json(accounts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+This reuses the same MongoDB connection, which is the standard approach with the MongoDB Node.js driver.
+
+The immediate cause of your error is simply:
+
+- const accounts = getDB.find({}).toArray;
++ const accounts = await getDB.find({}).toArray();
+
+- await client.close;
++ await client.close();
+TypeError [ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received function toArray
+    at Function.from (node:buffer:325:9)
+    at ServerResponse.send (/opt/render/project/src/node_modules/express/lib/response.js:182:22)
+    at /opt/render/project/src/index.js:92:19 {
+  code: 'ERR_INVALID_ARG_TYPE'
+}
+app.get("/allAcounts", async (req, res) => {
+	try {
+		await client.connect();
+		//const buffer = await fs.readFile("acounts.json");
+		//const data = JSON.parse(buffer);
+
+		//res.send(data);
+		const collection = client.db("allAcounts").collection("acounts");
+		const accounts = await collection.find({}).toArray;
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	} /*finally {
+		await client.close();
+	}*/
+});
+
+The same error is still present because you're still not calling toArray().
+
+You currently have:
+
+const accounts = await collection.find({}).toArray;
+
+Notice there are no parentheses after toArray.
+
+That line is equivalent to:
+
+const accounts = collection.find({}).toArray; // accounts is the function itself
+
+So when you do:
+
+res.status(200).send(accounts);
+
+you're sending a function, which produces:
+
+Received function toArray
+Correct code
+app.get("/allAcounts", async (req, res) => {
+  try {
+    await client.connect();
+
+    const collection = client.db("allAcounts").collection("acounts");
+    const accounts = await collection.find({}).toArray();
+
+    res.status(200).json(accounts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Could not get all accounts",
+      value: error.message,
+    });
+  }
+});
+Check line 92
+
+The stack trace says:
+
+at /opt/render/project/src/index.js:92:19
+
+Can you paste lines 85–95 of your index.js? That will confirm whether the error is exactly on:
+
+res.status(200).send(accounts);
+
+or somewhere else.
+
+Also tell me:
+
+Which MongoDB driver version are you using (mongodb package version)?
+What is the exact output of:
+console.log(typeof collection.find({}).toArray);
+
+It should print:
+
+function
