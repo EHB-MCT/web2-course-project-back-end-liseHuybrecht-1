@@ -4,7 +4,7 @@ const express = require("express");
 const fs = require("fs/promises");
 const app = express();
 require("dotenv").config();
-const port = process.env.PORT || "0.0.0.0";
+const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
@@ -69,11 +69,11 @@ app.get("/acounts", async (req, res) => {
 	const buffer = await fs.readFile("acounts.json");
 	const data = JSON.parse(buffer);
 
-	res.send(data[req.query.id]);
+	res.send(data[req.query.firstName]);
 });
 
 app.get("/allAcounts", async (req, res) => {
-	const buffer = await fs.readFile("acounts.json");
+	//const buffer = await fs.readFile("acounts.json");
 	const data = JSON.parse(buffer);
 
 	res.send(data);
