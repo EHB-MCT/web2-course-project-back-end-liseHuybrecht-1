@@ -1,0 +1,49 @@
+//app.put;
+
+//TODO: Invoke rest API
+
+//const request = require("request");
+const { emit } = require("process");
+//const { use } = require("react");
+//define http request implementation in a separate file to handle request input and output //parameters
+/*async function getAcount(req, res) {
+	let body = req.body;
+	let options = {
+		hostname: "http: //sampleservice.com/",
+		path: "/allAcounts",
+		method: "GET",
+	};
+	let result = await request(options);
+	res.send(); // or return specific parameter value in JSON format
+}*/
+async function UpdateAcount(req, res) {
+	let body = req.body;
+	let details = {
+		id: body.id,
+		userNumber: body.userNumber,
+		firstName: body.firstName,
+		lastName: body.lastName,
+		email: body.email,
+		password: body.password,
+	};
+	let options = {
+		hostname: "http: //easy-animals.onrender.com/info.html",
+		path:
+			"/acounts?" +
+			new Params({
+				id,
+				userNumber,
+				firstName,
+				lastName,
+				email,
+				password,
+			}),
+		method: "POST",
+	};
+	let result = await request(options, details);
+	res.json({
+		id: body.id,
+		name: body.name,
+		title: body.title,
+	});
+}
