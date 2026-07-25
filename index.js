@@ -87,8 +87,8 @@ app.get("/allAcounts", async (req, res) => {
 
 		//res.send(data);
 		const accounts = client
-			.db("Cluster0")
-			.collection("allAcounts")
+			.db("allAcounts")
+			.collection("acounts")
 			.find({}).toArray;
 
 		res.status(200).send(JSON.parse(accounts));
