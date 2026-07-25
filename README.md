@@ -37,3 +37,5 @@ https://chatgpt.com/ using js, i need to insert a password into a const, which i
 Lin de Huybrecht (My very smart older ssister)
 
 https://accreditly.io/articles/how-to-access-env-variables-in-javascript
+
+Yoeri "Pol" Tastenoy
