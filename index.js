@@ -12,12 +12,18 @@ const { all } = require("axios");
 
 //dotenv.config();
 
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGO_URI);
+
 const password = process.env.MONGODB_PASSWORD;
+
+const URI = process.env.MONGO_URI;
 
 const uri = `mongodb+srv://li.huybrecht@ehb.be:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const client = new MongoClient(URI, {
 	serverApi: {
 		version: ServerApiVersion.v1,
 		strict: true,
