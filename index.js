@@ -14,16 +14,16 @@ const { all } = require("axios");
 
 //const mongoose = require("mongoose");
 
-//mongoose.connect(process.env.MONGO_URI);
+//mongoose.connect(process.env.MONGODB_URI);
 
-const password = process.env.MONGODB_PASSWORD;
+const password = encodeURIComponent(process.env.MONGODB_PASSWORD);
 
-const URI = process.env.MONGO_URI;
+const URI = process.env.MONGODB_URI;
 
-const uri = `mongodb+srv://li.huybrecht@ehb.be:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0`;
+const uri = `mongodb+srv://li.huybrecht%40ehb.be:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const client = new MongoClient(URI, {
 	serverApi: {
 		version: ServerApiVersion.v1,
 		strict: true,
@@ -41,6 +41,7 @@ async function run() {
 		console.log(
 			"Pinged your deployment. You successfully connected to MongoDB!",
 		);
+		console.log(process.env.MONGODB_URI);
 	} finally {
 		// Ensures that the client will close when you finish/error
 		await client.close();
@@ -96,35 +97,40 @@ app.get("/allAcounts", async (req, res) => {
 
 app.post("/addUser", async (req, res) => {
 	try {
-		if (
-			!req.body.id ||
-			!req.body.firstName ||
-			!req.body.lastName ||
-			!req.body.email ||
-			!req.body.password
-		) {
-			res.status(400).send("missing info");
+		const { id, firstName, lastName, email, password } = req.body;
+
+		if (!firstName || !lastName || !email || !password) {
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			req.status(400).send("missing info");
 		}
 
-		const buffer = await fs.readFile("acounts.json");
-		const data = JSON.parse(buffer);
+		const users = await readUsers();
 
-		data[req.body] = {
-			id: req.body.id,
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			email: req.body.email,
-			password: req.body.password,
+		if (users.some((u) => u.email === email)) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		const newUser = {
+			id: Date.now().toString,
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
 		};
 
-		await fs.writeFile("acounts.json", JSON.stringify(data));
+		users.push(newUser);
+		await writeUsers(users);
 
+		const { password: _, ...userWithoutPassword } = newUser;
 		res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		//res.status(500).json({ error: "failed to create new user" });
 		res.status(500).send("Failed to upload new user");
-		console.log("PORT:", process.env.PORT);
 	}
 });
 //app.put;
