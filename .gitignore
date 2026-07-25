@@ -4,3 +4,4 @@ node_modules
 mongoDBPassword
 password.env
 .env
+uri.env
