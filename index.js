@@ -86,17 +86,17 @@ app.get("/allAcounts", async (req, res) => {
 		//const data = JSON.parse(buffer);
 
 		//res.send(data);
-		const getDB = await client.db("allAcounts").collection("acounts");
-		const accounts = getDB.find({}).toArray;
+		const collection = client.db("allAcounts").collection("acounts");
+		const accounts = await collection.find({}).toArray;
 
 		res.status(200).send(accounts);
 	} catch (error) {
 		console.log(error);
 
 		res.status(500).send({ error: "Could not get all accounts", value: error });
-	} finally {
-		await client.close;
-	}
+	} /*finally {
+		await client.close();
+	}*/
 });
 
 app.post("/addUser", async (req, res) => {
