@@ -84,17 +84,20 @@ app.get("/allAcounts", async (req, res) => {
 	}
 });
 
+app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
-		const { id, firstName, lastName, email, password } = req.body;
+		const { firstName, lastName, email, password } = req.body;
 
 		if (!firstName || !lastName || !email || !password) {
 			//return res.status(400);
 			//.json({ error: "firstname, lastname, email and password required" });
-			req.status(400).send("missing info");
+			return res.status(400).send("missing info");
 		}
 
 		const users = await readUsers();
+		console.log(users);
+		
 
 		if (users.some((u) => u.email === email)) {
 			return res.status(409).json({ error: "Email already exists" });
@@ -103,7 +106,7 @@ app.post("/addUser", async (req, res) => {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const newUser = {
-			id: Date.now().toString,
+			id: Date.now().toString(),
 			firstName,
 			lastName,
 			email,
