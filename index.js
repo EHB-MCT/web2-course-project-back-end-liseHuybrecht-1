@@ -91,7 +91,7 @@ app.get("/allAcounts", async (req, res) => {
 			.collection("acounts")
 			.find({}).toArray;
 
-		res.status(200).send(JSON.parse(accounts));
+		res.status(200).send(accounts);
 	} catch (error) {
 		console.log(error);
 
