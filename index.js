@@ -86,16 +86,16 @@ app.get("/allAcounts", async (req, res) => {
 		//const data = JSON.parse(buffer);
 
 		//res.send(data);
-		const accounts = await client
-			.db("allAcounts")
-			.collection("acounts")
-			.find({}).toArray;
+		const getDB = await client.db("allAcounts").collection("acounts");
+		const accounts = getDB.find({}).toArray;
 
 		res.status(200).send(accounts);
 	} catch (error) {
 		console.log(error);
 
 		res.status(500).send({ error: "Could not get all accounts", value: error });
+	} finally {
+		await client.close;
 	}
 });
 
