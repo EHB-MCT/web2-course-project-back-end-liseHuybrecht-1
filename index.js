@@ -58,6 +58,18 @@ app.listen(port, () => {
 	//console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
+app.get("/", async (req, res) => {
+	try {
+		res.redirect("/info.html");
+		//console.log("hello");
+		//res.send("hello");
+
+		const buffer = await fs.readFile("", { encode: "utf8" });
+	} catch (error) {
+		res.status(500).send("Server error, try again later");
+	}
+});
+
 app.get("/acounts", async (req, res) => {
 	try {
 		await client.connect();
