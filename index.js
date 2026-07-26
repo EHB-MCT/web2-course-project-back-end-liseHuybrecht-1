@@ -85,7 +85,7 @@ app.get("/allAcounts", async (req, res) => {
 });
 
 app.use(express.json());
-app.post("/addUser", async (req, res) => {
+/*app.post("/addUser", async (req, res) => {
 	try {
 		const { firstName, lastName, email, password } = req.body;
 		console.log(req.body);
@@ -121,7 +121,7 @@ app.post("/addUser", async (req, res) => {
 		console.log("Error, unable to create new user");
 		res.status(500).json({ error });
 	}
-});
+});*/
 
 app.put("/updateAccount", async (req, res) => {
 	try {
