@@ -6,7 +6,6 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
-import bcrypt from "bcrypt";
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { all } = require("axios");
@@ -104,6 +103,8 @@ app.post("/addUser", async (req, res) => {
 		if (existingUsers) {
 			return res.status(409).json({ error: "Email already exists" });
 		}
+
+		import bcrypt from "bcrypt";
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
