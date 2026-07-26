@@ -49,9 +49,9 @@ run().catch(console.dir);
 app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
 	console.log(port);
-	console.log(`GET /acounts - Get all acounts`);
-	console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
-	console.log(process.env.YOUR_VARIABLE_NAME);
+	//console.log(`GET /acounts - Get all acounts`);
+	//console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
+	//console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
 app.get("/acounts", async (req, res) => {
@@ -97,33 +97,21 @@ app.post("/addUser", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		const existingUsers = await userCollection.findOne({ email });
+		const existingUsers = await collection.findOne({ email });
 
 		if (existingUsers) {
 			return res.status(409).json({ error: "Email already exists" });
 		}
 
-		await userCollection.insertOne({
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
 			firstName,
 			lastName,
 			email,
 			password: hashedPassword,
 		});
 
-		const hashedPassword = await bcrypt.hash(password, 10);
-
-		const newUser = {
-			id: Date.now().toString(),
-			firstName,
-			lastName,
-			email,
-			password: hashedPassword,
-		};
-
-		users.push(newUser);
-		await writeUsers(users);
-
-		const { password: _, ...userWithoutPassword } = newUser;
 		res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
