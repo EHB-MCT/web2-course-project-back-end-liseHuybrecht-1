@@ -113,12 +113,12 @@ app.post("/addUser", async (req, res) => {
 			password: hashedPassword,
 		});
 
-		res.status(201).send("upload succesful");
+		return res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		res.status(500).json({ error });
-		res.status(500).send({ error: "Failed to upload new user", value: error });
+		
 	}
 });
 
