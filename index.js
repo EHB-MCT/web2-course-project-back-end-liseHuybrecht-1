@@ -44,12 +44,11 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.use(express.static("publicFolder"));
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
+/*app.get("/", (req, res) => {
 	res.send("Backend is running!");
-});
+});*/
 
 app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
