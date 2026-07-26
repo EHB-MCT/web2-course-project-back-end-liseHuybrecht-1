@@ -6,6 +6,7 @@ const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
+import bcrypt from "bcrypt";
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { all } = require("axios");
@@ -118,7 +119,6 @@ app.post("/addUser", async (req, res) => {
 	} catch (error) {
 		console.log("Error, unable to create new user");
 		res.status(500).json({ error });
-		
 	}
 });
 
