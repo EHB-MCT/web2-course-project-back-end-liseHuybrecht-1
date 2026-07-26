@@ -104,7 +104,7 @@ app.post("/addUser", async (req, res) => {
 			return res.status(409).json({ error: "Email already exists" });
 		}
 
-		import bcrypt from "bcrypt";
+		//import bcrypt from "bcrypt";
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
