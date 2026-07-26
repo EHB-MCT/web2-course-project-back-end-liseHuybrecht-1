@@ -73,7 +73,7 @@ app.get("/acount", async (req, res) => {
 		await client.connect();
 
 		const collection = client.db("allAcounts").collection("acounts");
-		const accounts = await collection.find(req.query.firstName).toArray();
+		const accounts = await collection.find({ firstName }).toArray();
 
 		res.status(200).send(accounts);
 	} catch (error) {
