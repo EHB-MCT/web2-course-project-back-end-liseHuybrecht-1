@@ -46,16 +46,16 @@ run().catch(console.dir);
 app.use(express.static("publicFolder"));
 app.use(bodyParser.json());
 
+app.get("/", (req, res) => {
+	res.send("Backend is running!");
+});
+
 app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
 	console.log(port);
 	console.log(`GET /acounts - Get all acounts`);
 	//console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
 	//console.log(process.env.YOUR_VARIABLE_NAME);
-});
-
-app.get("/", (req, res) => {
-  res.send("Backend is running!");
 });
 
 app.get("/acounts", async (req, res) => {
