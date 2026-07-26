@@ -60,9 +60,7 @@ app.listen(port, () => {
 
 app.get("/", async (req, res) => {
 	try {
-		res.redirect("/info.html");
-		//console.log("hello");
-		//res.send("hello");
+		res.redirect("info.html");
 
 		const buffer = await fs.readFile("", { encode: "utf8" });
 	} catch (error) {
@@ -117,11 +115,14 @@ app.post("/addUser", async (req, res) => {
 
 		const existingUsers = await collection.findOne({ email });
 
+		console.log("hello1");
+
 		if (existingUsers) {
 			return res.status(409).json({ error: "Email already exists" });
 		}
 
 		//import bcrypt from "bcrypt";
+		console.log("hello2");
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -131,6 +132,7 @@ app.post("/addUser", async (req, res) => {
 			email,
 			password: hashedPassword,
 		});
+		console.log("hello3");
 
 		return res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);

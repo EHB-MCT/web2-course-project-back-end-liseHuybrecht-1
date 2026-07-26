@@ -1,0 +1,150 @@
+That's a very useful result. It means:
+
+✅ Your Express server is running.
+✅ Render is routing requests correctly.
+✅ Your API endpoints are working.
+✅ The CSP warnings are not the underlying problem.
+
+The only thing missing is whatever was supposed to be served at /.
+
+Since you have:
+
+app.use(express.static("publicFolder"));
+
+Express will only serve your website if publicFolder exists in the deployed app and contains an index.html.
+
+Check these on your local project
+
+Does your project look something like this?
+
+project/
+├── server.js
+├── package.json
+├── publicFolder/
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+
+If publicFolder/index.html is missing, then GET / will never show your website.
+
+If it worked yesterday...
+
+The most likely explanations are:
+
+publicFolder was renamed.
+index.html was moved or deleted.
+Render is deploying a different branch or commit.
+A .gitignore accidentally excludes publicFolder.
+Your frontend became a separate project and is no longer part of this deployment.
+I'd like to see one more thing
+
+Can you paste:
+
+Your project folder structure (or a screenshot of it).
+Your Render build settings:
+Build Command
+Start Command
+Root Directory (if you set one)
+
+One thing I already noticed in your code that's worth fixing (though it's unrelated to the CSP):
+
+async function run() {
+  try {
+    await client.connect();
+    ...
+  } finally {
+    await client.close();
+  }
+}
+
+You connect to MongoDB and immediately close the connection. In a long-running Express server, you typically connect once at startup and keep the client open until the process exits. While your later client.connect() calls may reconnect, this isn't the recommended pattern.
+
+Based on what we've established so far, I don't think the issue is Express or Render anymore. It's more likely that your frontend files are no longer being served. Seeing the project structure and Render settings should make the cause clear.
+
+my projectstructure didnt change from the last time it worked. 
+
+If nothing in your code or project structure changed, then something in the deployment almost certainly did.
+
+The biggest clue is this:
+
+Yesterday: visiting https://easy-animals.onrender.com/ showed your website.
+Today: it returns Cannot GET /.
+Your API routes still work.
+
+That means Express is running, but express.static("publicFolder") is no longer serving index.html.
+
+Here are the most likely causes, in order:
+
+Render is deploying a different commit or branch.
+Check the latest deployment in Render and verify the commit hash matches the one you expect.
+The working directory changed.
+If Render is now starting your app from a different folder, publicFolder may not exist relative to server.js.
+The publicFolder isn't included in the deployment.
+This can happen if it was accidentally ignored by Git or if the Render root directory changed.
+A quick test
+
+Temporarily add this before app.use(express.static(...)):
+
+const path = require("path");
+const fs = require("fs");
+
+console.log("Current directory:", __dirname);
+console.log(
+  "publicFolder exists:",
+  fs.existsSync(path.join(__dirname, "publicFolder"))
+);
+console.log(
+  "index.html exists:",
+  fs.existsSync(path.join(__dirname, "publicFolder", "index.html"))
+);
+
+Deploy that and look at the Render logs.
+
+If you see something like:
+
+Current directory: /opt/render/project/src
+publicFolder exists: false
+index.html exists: false
+
+then we've found the problem immediately.
+
+If it says:
+
+publicFolder exists: true
+index.html exists: true
+
+then the next step is to find out why express.static isn't serving it, which is unusual.
+
+One more important question
+
+Could you show me:
+
+a screenshot (or text output) of your project tree, including publicFolder, and
+your Render service settings:
+Root Directory
+Build Command
+Start Command
+
+Those two pieces of information are likely enough to pinpoint what's changed, even if your code hasn't.
+
+i apparently deleted something vital. added it back. it works now
+
+That would definitely explain it. 😄
+
+The fact that:
+
+GET / changed from serving your website to Cannot GET /
+your API endpoints (/allAcounts, etc.) kept working
+Postman was unaffected
+
+strongly suggested that the backend was fine, but the static frontend files (or something needed to serve them) had gone missing.
+
+Now that you've restored the missing file(s), it makes sense that everything is working again.
+
+A couple of tips to avoid this in the future:
+
+Commit working versions to Git frequently so you can easily compare or restore deleted files.
+If something suddenly stops working, git status and git diff are often the fastest way to spot accidental deletions or changes.
+For Express apps serving static files, it's also handy to verify that publicFolder/index.html exists whenever GET / starts returning Cannot GET /.
+
+Glad you found the cause!
