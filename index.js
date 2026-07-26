@@ -88,6 +88,7 @@ app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
 		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
 
 		if (!firstName || !lastName || !email || !password) {
 			//return res.status(400);
@@ -116,7 +117,7 @@ app.post("/addUser", async (req, res) => {
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
 		console.log("Error, unable to create new user");
-		//res.status(500).json({ error: "failed to create new user" });
+		res.status(500).json({ error });
 		res.status(500).send({ error: "Failed to upload new user", value: error });
 	}
 });
