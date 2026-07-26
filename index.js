@@ -50,8 +50,8 @@ app.listen(port, () => {
 	console.log(`app listening on port https://easy-animals.onrender.com`);
 	console.log(port);
 	console.log(`GET /acounts - Get all acounts`);
-	console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
-	console.log(process.env.YOUR_VARIABLE_NAME);
+	//console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
+	//console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
 app.get("/acounts", async (req, res) => {
@@ -87,6 +87,7 @@ app.get("/allAcounts", async (req, res) => {
 app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
+		const bcrypt = require("bcrypt");
 		const { firstName, lastName, email, password } = req.body;
 		console.log(req.body);
 
