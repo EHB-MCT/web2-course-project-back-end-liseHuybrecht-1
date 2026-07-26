@@ -54,6 +54,10 @@ app.listen(port, () => {
 	//console.log(process.env.YOUR_VARIABLE_NAME);
 });
 
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 app.get("/acounts", async (req, res) => {
 	try {
 		await client.connect();
@@ -84,7 +88,7 @@ app.get("/allAcounts", async (req, res) => {
 	}
 });
 
-app.use(express.json());
+//app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
 		const bcrypt = require("bcrypt");
@@ -126,33 +130,27 @@ app.post("/addUser", async (req, res) => {
 
 app.put("/updateAccount", async (req, res) => {
 	try {
-		const { id, firstName, lastName, email, password } = req.body;
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
 
-		const users = await readUsers();
+		const collection = client.db("allAcounts").collection("acounts");
 
-		if (users.some((u) => u.email === email)) {
-			return res.status(409).json({ error: "Email already exists" });
-		}
+		//import bcrypt from "bcrypt";
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
-		const newUser = {
-			id: Date.now().toString,
+		await collection.insertOne({
 			firstName,
 			lastName,
 			email,
 			password: hashedPassword,
-		};
+		});
 
-		users.push(newUser);
-		await writeUsers(users);
-
-		const { password: _, ...userWithoutPassword } = newUser;
-		res.status(201).send("upload succesful");
+		return res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
 		console.log("Error, unable to create new user");
-		//res.status(500).json({ error: "failed to create new user" });
-		res.status(500).send({ error: "Failed to upload new user", value: error });
+		res.status(500).json({ error });
 	}
 });
