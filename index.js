@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 	},
 });
 
+app.use(express.static("publicFolder"));
 async function run() {
 	try {
 		//const allUsers = x;
