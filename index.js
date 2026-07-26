@@ -137,8 +137,13 @@ app.post("/addUser", async (req, res) => {
 		return res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
-		console.log("Error, unable to create new user");
-		res.status(500).json({ error });
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
 	}
 });
 
