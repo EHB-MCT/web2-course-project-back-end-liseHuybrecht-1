@@ -68,12 +68,12 @@ app.get("/", async (req, res) => {
 	}
 });
 
-app.get("/acounts", async (req, res) => {
+app.get("/acount", async (req, res) => {
 	try {
 		await client.connect();
 
 		const collection = client.db("allAcounts").collection("acounts");
-		const accounts = await collection.find(firstName).toArray();
+		const accounts = await collection.find(req.query.firstName).toArray();
 
 		res.status(200).send(accounts);
 	} catch (error) {
@@ -98,7 +98,7 @@ app.get("/allAcounts", async (req, res) => {
 	}
 });
 
-//app.use(express.json());
+app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
 		const bcrypt = require("bcrypt");
@@ -155,7 +155,9 @@ app.put("/updateAccount", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		//import bcrypt from "bcrypt";
+		if (existingUsers) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -169,7 +171,12 @@ app.put("/updateAccount", async (req, res) => {
 		return res.status(201).send("upload succesful");
 		//res.status(201).json(userWithoutPassword);
 	} catch (error) {
-		console.log("Error, unable to create new user");
-		res.status(500).json({ error });
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
 	}
 });

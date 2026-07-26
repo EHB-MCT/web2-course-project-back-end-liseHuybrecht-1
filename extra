@@ -1,5 +1,5 @@
 //RUN SERVER, VERY IMPORTANT
-const { log } = require("console");
+/*const { log } = require("console");
 const express = require("express");
 const fs = require("fs/promises");
 const app = express();
@@ -143,9 +143,8 @@ app.put;
 		res.status(500).send("Failed to upload new user");
 	} */
 
-
-		//TODO: attempt 24/7
-		if (
+//TODO: attempt 24/7
+/*	if (
 		!req.body.id ||
 		!req.body.firstName ||
 		!req.body.lastName ||
@@ -198,4 +197,4 @@ app.delete("/deleteUser", async (req, res) => {});
 		//res.status(500).json({ error: "failed to create new user" });
 		res.status(500).send("Failed to upload new user");
 	}
-	https://www.geeksforgeeks.org/node-js/rest-api-using-the-express-to-perform-crud-create-read-update-delete/
+	https://www.geeksforgeeks.org/node-js/rest-api-using-the-express-to-perform-crud-create-read-update-delete/*/

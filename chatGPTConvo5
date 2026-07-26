@@ -1,0 +1,289 @@
+/*That's the key error. MODULE_NOT_FOUND means Node.js can't find a package or file that you're trying to import or require. This is not a MongoDB error—your application is failing before it can complete the request.
+
+The important part of the error is actually the line that's missing. It usually looks like:
+
+Error: Cannot find module 'bcrypt'
+
+or
+
+Error: Cannot find module './database'
+
+The "code": "MODULE_NOT_FOUND" by itself doesn't tell us which module is missing.
+
+Please do this
+
+Instead of only returning the error object, log the whole error:
+
+catch (error) {
+    console.error(error);
+    return res.status(500).json({
+        message: error.message,
+        code: error.code,
+    });
+}
+
+Then check the Render logs. You should see something like:
+
+Error: Cannot find module 'bcrypt'
+
+or
+
+Error: Cannot find module 'mongodb'
+Common causes
+Missing dependency: You forgot to install it.
+Example: npm install bcrypt
+Or: npm install mongodb
+Dependency isn't in package.json: It works locally but wasn't committed, so Render doesn't install it.
+Incorrect import path:
+import db from "./db.js";
+If the file doesn't exist or the path is wrong, you'll get MODULE_NOT_FOUND.
+Can you also share:
+Your package.json (especially the "dependencies" section).
+The imports from the top of index.js (the first 15–20 lines).
+
+That should be enough to identify exactly which module is missing.
+
+app.post("/addUser", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
+
+		if (!firstName || !lastName || !email || !password) {
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			return res.status(400).send("missing info");
+		}
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const existingUsers = await collection.findOne({ email });
+
+		console.log("hello1");
+
+		if (existingUsers) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+
+		//import bcrypt from "bcrypt";
+		console.log("hello2");
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		});
+		console.log("hello3");
+
+		return res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.log("Error, unable to create new user");
+		res.status(500).json({ error });
+	}
+});
+this is what i currently have
+
+The route itself isn't the main problem anymore. The clue is the previous error:
+
+"code": "MODULE_NOT_FOUND"
+
+Looking at your code, this line stands out:
+
+const bcrypt = require("bcrypt");
+If you're using ES modules
+
+If your project uses imports like:
+
+import express from "express";
+
+or your package.json contains:
+
+{
+  "type": "module"
+}
+
+then you should not use require().
+
+Instead, put this at the top of your file:
+
+import bcrypt from "bcrypt";
+
+and remove:
+
+const bcrypt = require("bcrypt");
+
+from inside the route.
+
+If you're using CommonJS
+
+If your file starts with:
+
+const express = require("express");
+
+then require("bcrypt") is correct—but you need to make sure bcrypt is installed:
+
+npm install bcrypt
+
+and committed to your package.json before deploying to Render.
+
+Your debugging logs
+
+You added:
+
+console.log("hello1");
+console.log("hello2");
+console.log("hello3");
+
+Which ones appear in the Render logs?
+
+No hello1 → error is before findOne().
+hello1 but no hello2 → error at findOne().
+hello2 but no hello3 → error at bcrypt.hash() or insertOne().
+hello3 → the insert succeeded.
+
+That tells us exactly where it's failing.
+
+Also improve your catch block
+
+Right now you're hiding the useful information again.
+
+Use:
+
+catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+    });
+}
+
+The message is what matters.
+
+I need to see two things
+
+Please paste:
+
+The first 20–30 lines of index.js (all your import or require statements).
+Your package.json.
+
+Those will tell us whether:
+
+you're mixing import and require,
+bcrypt is missing,
+or another module is causing MODULE_NOT_FOUND.
+TypeError: Cannot destructure property 'firstName' of 'req.body' as it is undefined.
+    at /opt/render/project/src/index.js:105:11
+    at Layer.handleRequest (/opt/render/project/src/node_modules/router/lib/layer.js:152:17)
+    at next (/opt/render/project/src/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/opt/render/project/src/node_modules/router/lib/route.js:117:3)
+    at handle (/opt/render/project/src/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/opt/render/project/src/node_modules/router/lib/layer.js:152:17)
+    at /opt/render/project/src/node_modules/router/index.js:295:15
+    at processParams (/opt/render/project/src/node_modules/router/index.js:582:12)
+    at next (/opt/render/project/src/node_modules/router/index.js:291:5)
+    at read (/opt/render/project/src/node_modules/body-parser/lib/read.js:62:5)
+
+Good, now we have the actual issue:
+
+TypeError: Cannot destructure property 'firstName' of 'req.body' as it is undefined.
+
+This means:
+
+const { firstName, lastName, email, password } = req.body;
+
+is failing because req.body is undefined.
+
+Your MongoDB code and bcrypt are not the problem yet. Express is not receiving the request body.
+
+1. Make sure express.json() is before your route
+
+Your file order should look like this:
+
+import express from "express";
+
+const app = express();
+
+app.use(express.json());
+
+app.post("/addUser", async (req, res) => {
+    // req.body will now work
+});
+
+If you put:
+
+app.use(express.json());
+
+after your route, it won't apply.
+
+2. Check your Postman request
+
+In Postman:
+
+Method:
+POST
+URL:
+https://your-render-url.com/addUser
+Headers:
+
+Add:
+
+Content-Type: application/json
+Body:
+
+Choose:
+
+Body → raw → JSON
+
+Send:
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "password": "123456"
+}
+
+Do not use form-data or x-www-form-urlencoded unless you add the matching middleware.
+
+3. Add a safety check
+
+For debugging, change:
+
+const { firstName, lastName, email, password } = req.body;
+
+to:
+
+console.log("BODY:", req.body);
+
+const { firstName, lastName, email, password } = req.body || {};
+
+Then Render logs will show what Express actually receives.
+
+4. If you're testing through a frontend
+
+If you use fetch, make sure you send JSON:
+
+fetch("https://your-render-url.com/addUser", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john@example.com",
+        password: "123456"
+    })
+});
+
+Your next step: add:
+
+console.log("BODY:", req.body);
+
+and tell me what Render prints. It will either be {} (wrong content type) or undefined (middleware/order issue).*/
