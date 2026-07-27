@@ -193,9 +193,9 @@ app.post("/addUser", async (req, res) => {
 
 app.use(express.json());
 
-app.put("/updateAccount/:firstName", (req, res) => {
-	const updated = replaceUser(req.params.firstName, req.body);
-	res.json(updated);
+app.put("/updateAccount", (req, res) => {
+	const updated = replaceUser(req.query.firstName, req.body);
+	res.send(updated);
 });
 
 app.delete("/deleteAccount", async (req, res) => {});
