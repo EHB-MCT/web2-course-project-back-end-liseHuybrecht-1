@@ -80,6 +80,7 @@ app.get("/account/:email", async (req, res) => {
 
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
+			console.log(error);
 		}
 
 		res.status(200).send(accounts);
