@@ -152,7 +152,7 @@ app.post("/addUser", async (req, res) => {
 	}
 });
 
-app.put("/updateAccount", async (req, res) => {
+/*app.put("/updateAccount", async (req, res) => {
 	try {
 		await client.connect();
 
@@ -189,6 +189,13 @@ app.put("/updateAccount", async (req, res) => {
 		});
 		//res.status(500).send({ error: "Could not update account", value: error });
 	}
+});*/
+
+app.use(express.json());
+
+app.put("/users/:firstName", (req, res) => {
+	const updated = replaceUser(req.params.firstName, req.body);
+	res.json(updated);
 });
 
 app.delete("/deleteAccount", async (req, res) => {});
