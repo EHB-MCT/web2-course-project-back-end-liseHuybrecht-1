@@ -194,8 +194,12 @@ app.post("/addUser", async (req, res) => {
 app.use(express.json());
 
 app.put("/updateAccount", (req, res) => {
-	const updated = replaceUser(req.query.firstName, req.body);
-	res.send(updated);
+	try {
+		const updated = replaceUser(req.query.firstName, req.body);
+		res.send(updated);
+	} catch (error) {
+		res.status(500).send({ error: "idk", value: error });
+	}
 });
 
 app.delete("/deleteAccount", async (req, res) => {});
