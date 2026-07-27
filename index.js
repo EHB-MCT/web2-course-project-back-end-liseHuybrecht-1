@@ -73,13 +73,14 @@ app.get("/acount", async (req, res) => {
 		await client.connect();
 
 		const collection = client.db("allAcounts").collection("acounts");
-		const accounts = await collection.find({ firstName }).toArray();
+
+		const accounts = await collection.findOne({}).toArray();
 
 		res.status(200).send(accounts);
 	} catch (error) {
 		console.log(error);
 
-		res.status(500).send({ error: "Could not get all accounts", value: error });
+		res.status(500).send({ error: "Could not get account", value: error });
 	}
 });
 
