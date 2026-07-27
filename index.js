@@ -198,8 +198,31 @@ app.put("/updateAccount", (req, res) => {
 		const updated = replaceUser(req.query.firstName, req.body);
 		res.send(updated);
 	} catch (error) {
-		res.status(500).send({ error: "idk", value: error });
+		//res.status(500).send({ error: "could not update account", value: error });
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
 	}
 });
 
-app.delete("/deleteAccount", async (req, res) => {});
+app.delete("/deleteAccount", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}
+});
