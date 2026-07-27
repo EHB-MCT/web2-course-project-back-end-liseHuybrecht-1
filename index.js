@@ -79,8 +79,7 @@ app.get("/account/:email", async (req, res) => {
 			.toArray();
 
 		if (!account) {
-			return res.status(404).send({ error: "Account not found" });
-			console.log(error);
+			return res.status(404).send({ error: "Account not found", value: error });
 		}
 
 		res.status(200).send(accounts);
