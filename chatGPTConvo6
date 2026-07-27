@@ -1,0 +1,299 @@
+There are a few issues with your code.
+
+1. findOne() does not return a cursor
+
+This is incorrect:
+
+const accounts = await collection
+	.findOne({ email: req.params.email })
+	.toArray();
+
+findOne() returns a single object (or null), so remove .toArray().
+
+2. You're checking the wrong variable
+
+You wrote:
+
+if (!account) {
+
+but your variable is called accounts.
+
+3. Correct version
+app.get("/account/:email", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({
+			email: req.params.email,
+		});
+
+		if (!account) {
+			return res.status(404).send({
+				error: "Account not found",
+			});
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({
+			error: "Could not get account",
+			value: error,
+		});
+	}
+});
+Postman example
+
+If your account in MongoDB looks like this:
+
+{
+  "_id": "...",
+  "name": "John",
+  "email": "john@gmail.com"
+}
+
+Then in Postman:
+
+Method
+
+GET
+
+URL
+
+http://localhost:3000/account/john@gmail.com
+
+or if your backend is on Render:
+
+https://your-app.onrender.com/account/john@gmail.com
+If the email contains @
+
+Sometimes the @ and other special characters should be URL encoded.
+
+For example:
+
+john@gmail.com
+
+becomes
+
+john%40gmail.com
+
+So the URL would be:
+
+https://your-app.onrender.com/account/john%40gmail.com
+
+Most browsers and Postman handle this automatically, but it's worth trying if you're getting unexpected results.
+
+If you're getting 404 Not Found
+
+There are two different kinds of 404:
+
+1. Express route not found
+
+The response might say something like:
+
+Cannot GET /account/john@gmail.com
+
+This means your route isn't being reached. Check:
+
+Is your server running?
+Did you redeploy Render?
+Are you using the correct URL?
+Is the route actually /account/:email?
+2. Your own 404
+
+If the response is:
+
+{
+  "error": "Account not found"
+}
+
+then the route is working, but MongoDB didn't find a document with that email.
+
+To help narrow it down, tell me:
+What is the exact URL you're using in Postman?
+What does one document in your acounts collection look like? (You can remove any passwords or sensitive data.)
+What is the exact 404 response body? Is it "Cannot GET..." or your JSON {"error":"Account not found"}?
+app.get("/account/:email", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.params.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found", value: error });
+		}
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}
+});
+in postman, i use my render url because its already linked to my mongodb
+i only get an error in postman, its a "404 not found" and a "cannot GET /account"
+
+The message Cannot GET /account is an important clue.
+
+It means Express never matched your route. Your route is:
+
+app.get("/account/:email", ...)
+
+This route requires an email after /account/.
+
+For example:
+
+GET https://your-render-app.onrender.com/account/test@gmail.com
+
+or URL-encoded:
+
+GET https://your-render-app.onrender.com/account/test%40gmail.com
+
+If you're requesting only:
+
+GET https://your-render-app.onrender.com/account
+
+then Express will respond with:
+
+Cannot GET /account
+
+because there is no route for /account.
+
+I also noticed two bugs in your code
+
+You're sending the wrong variable:
+
+res.status(200).send(accounts);
+
+It should be:
+
+res.status(200).send(account);
+
+And this line:
+
+return res.status(404).send({ error: "Account not found", value: error });
+
+shouldn't reference error because there isn't one in that branch. It should simply be:
+
+return res.status(404).send({
+  error: "Account not found",
+});
+Can you try this?
+
+If your Render URL is:
+
+https://my-api.onrender.com
+
+and your database contains:
+
+{
+  "email": "alice@gmail.com",
+  "name": "Alice"
+}
+
+Then in Postman:
+
+Method: GET
+URL:
+https://my-api.onrender.com/account/alice@gmail.com
+
+or
+
+https://my-api.onrender.com/account/alice%40gmail.com
+If it still says Cannot GET /account/...
+
+Then the problem is likely one of these:
+
+The latest code hasn't been deployed to Render.
+Your route is inside a router with a prefix (for example, app.use("/api", router) would make the URL /api/account/:email).
+You're hitting the wrong Render service or URL.
+
+Could you show me:
+
+The exact URL you're entering in Postman (you can replace your Render app name with my-app), for example https://my-app.onrender.com/...
+Your app.js or server.js file (especially where you define app.get(...) and app.listen(...)).
+
+With those, I can usually spot the issue in a minute.
+
+https://easy-animals.onrender.com/account?email=my.goodmail@email.com. my url. my other get and my post do work
+
+I think I see the problem.
+
+Your route is:
+
+app.get("/account/:email", ...)
+
+but you're calling:
+
+https://easy-animals.onrender.com/account?email=my.goodmail@email.com
+
+Those are not the same. req.params.email only works when the email is part of the path, not the query string. Query strings are accessed through req.query.
+
+Option 1 (keep your current route)
+
+If your route is:
+
+app.get("/account/:email", ...)
+
+then the URL should be:
+
+https://easy-animals.onrender.com/account/my.goodmail@email.com
+
+or, even better, URL-encoded:
+
+https://easy-animals.onrender.com/account/my.goodmail%40email.com
+Option 2 (use the URL you're already calling)
+
+If you want to keep using:
+
+https://easy-animals.onrender.com/account?email=my.goodmail@email.com
+
+then change your route to use req.query instead:
+
+app.get("/account", async (req, res) => {
+    try {
+        const collection = client.db("allAcounts").collection("acounts");
+
+        const account = await collection.findOne({
+            email: req.query.email,
+        });
+
+        if (!account) {
+            return res.status(404).send({
+                error: "Account not found",
+            });
+        }
+
+        res.send(account);
+    } catch (error) {
+        res.status(500).send({
+            error: "Could not get account",
+            value: error,
+        });
+    }
+});
+
+This route matches the URL you're sending.
+
+One more thing: you said the response is "Cannot GET /account".
+
+That suggests your deployed server may not actually have a GET /account route. If your code is using:
+
+app.get("/account/:email", ...)
+
+then requesting /account?email=... should still match /account with a query string if the route is defined as /account, but not if it's only /account/:email. The "Cannot GET" message usually means the requested path doesn't match any route.
+
+Can you paste your entire server.js (or index.js)? Also tell me whether your working route is:
+
+app.get("/accounts", ...)
+
+or
+
+app.get("/acount", ...)
+
+I suspect there's a route name mismatch (for example acount vs account or accounts), and seeing the whole file will make it easy to spot.

@@ -39,3 +39,10 @@ Lin de Huybrecht (My very smart older ssister)
 https://accreditly.io/articles/how-to-access-env-variables-in-javascript
 
 Yoeri "Pol" Tastenoy
+
+chatGPTConvo
+chatGPTConvo2
+chatGPTConvo3
+chatGPTConvo4
+chatGPTConvo5
+chatGPTConvo6

@@ -154,15 +154,19 @@ app.post("/addUser", async (req, res) => {
 
 app.put("/updateAccount", async (req, res) => {
 	try {
-		const bcrypt = require("bcrypt");
-		const { firstName, lastName, email, password } = req.body;
-		console.log(req.body);
+		await client.connect();
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		if (existingUsers) {
-			return res.status(409).json({ error: "Email already exists" });
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
 		}
+
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -183,5 +187,8 @@ app.put("/updateAccount", async (req, res) => {
 			code: error.code,
 			stack: error.stack,
 		});
+		//res.status(500).send({ error: "Could not update account", value: error });
 	}
 });
+
+app.delete("/deleteAccount", async (req, res) => {});
