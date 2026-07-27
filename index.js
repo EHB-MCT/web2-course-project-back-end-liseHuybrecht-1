@@ -68,7 +68,7 @@ app.get("/", async (req, res) => {
 	}
 });
 
-app.get("/account/:email", async (req, res) => {
+app.get("/account", async (req, res) => {
 	try {
 		await client.connect();
 
