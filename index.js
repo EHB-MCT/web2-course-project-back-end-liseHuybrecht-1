@@ -74,13 +74,13 @@ app.get("/account/:email", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		const account = await collection.findOne({ email: req.params.email });
+		const account = await collection.findOne({ email: req.query.email });
 
 		if (!account) {
-			return res.status(404).send({ error: "Account not found", value: error });
+			return res.status(404).send({ error: "Account not found" });
 		}
 
-		res.status(200).send(accounts);
+		res.status(200).send(account);
 	} catch (error) {
 		console.log(error);
 
