@@ -74,7 +74,7 @@ app.get("/acount", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		const accounts = await collection.findOne({}).toArray();
+		const accounts = await collection.findOne({ email: "" }).toArray();
 
 		res.status(200).send(accounts);
 	} catch (error) {
