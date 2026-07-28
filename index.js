@@ -195,12 +195,9 @@ app.use(express.json());
 
 app.patch("/updateAccountName", async (req, res) => {
 	try {
-		/*const updated = replaceUser(req.query.firstName, req.body);
-		res.send(updated);*/
-
 		const db = client.db("allAcounts");
 		const result = await db
-			.collection("users")
+			.collection("acounts")
 			.updateOne({ firstName: req.query.firstName }, { $set: req.body });
 		res.json(result);
 	} catch (error) {
