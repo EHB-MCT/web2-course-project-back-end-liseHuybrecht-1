@@ -223,7 +223,7 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 	}
 });
 
-app.delete("/deleteAccount/:id", async (req, res) => {
+app.delete("/deleteAccount/:_id", async (req, res) => {
 	/*try {
 		await client.connect();
 
@@ -244,7 +244,7 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 		res.status(500).send({ error: "Could not get account", value: error });
 	}*/
 
-	console.log("DELETE route reached", req.params.id);
+	console.log("DELETE route reached", req.params._id);
 	try {
 		const { id } = req.params;
 
