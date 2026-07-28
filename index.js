@@ -26,7 +26,7 @@ const client = new MongoClient(uri, {
 	},
 });
 
-app.use(express.static("publicFolder"));
+//app.use(express.static("publicFolder"));
 async function run() {
 	try {
 		//const allUsers = x;
@@ -224,6 +224,10 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 });
 
 app.delete("/deleteAccount/:_id", async (req, res) => {
+	console.log("hello, delete exists");
+	console.log("delete hit", req.params.id);
+	console.log("delete hit", req.params._id);
+
 	/*try {
 		await client.connect();
 
