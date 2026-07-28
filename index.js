@@ -199,7 +199,7 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		const account = await collection.findOne({ email: req.query.email });
+		const account = await collection.findOne({ id: req.query.id });
 
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
@@ -223,7 +223,7 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 	}
 });
 
-app.delete("/deleteAccount", async (req, res) => {
+app.delete("/deleteAccount/:id", async (req, res) => {
 	try {
 		await client.connect();
 
@@ -231,14 +231,10 @@ app.delete("/deleteAccount", async (req, res) => {
 
 		const collection = client.db("allAcounts").collection("acounts");
 
-		const account = await collection.findOne({ email: req.query.email });
+		const account = await collection.findOne({ id: req.query.id });
 
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
-		}
-
-		if (account) {
-			res.send(account);
 		}
 
 		res.status(200).send(account);
