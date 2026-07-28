@@ -193,12 +193,11 @@ app.post("/addUser", async (req, res) => {
 
 app.use(express.json());
 
-app.put("/updateAccount", (req, res) => {
+app.patch("/updateAccountName", (req, res) => {
 	try {
 		const updated = replaceUser(req.query.firstName, req.body);
 		res.send(updated);
 	} catch (error) {
-		//res.status(500).send({ error: "could not update account", value: error });
 		return res.status(500).json({
 			message: error.message,
 			code: error.code,
