@@ -205,13 +205,13 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 			return res.status(404).send({ error: "Account not found" });
 		}
 
-		console.log(req.body);
+		//console.log(req.body);
 
 		const result = await collection.updateOne(
 			{ email: req.query.email },
 			{ $set: req.body },
 		);
-		console.log(req.query.firstName);
+		//console.log(req.query.firstName);
 
 		res.json(result);
 	} catch (error) {
@@ -224,7 +224,7 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 });
 
 app.delete("/deleteAccount/:id", async (req, res) => {
-	try {
+	/*try {
 		await client.connect();
 
 		const { firstName, lastName, email, password } = req.body;
@@ -242,5 +242,16 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 		console.log(error);
 
 		res.status(500).send({ error: "Could not get account", value: error });
+	}*/
+
+	try {
+		const account = await account.finByIdAndDelete(req.query.id);
+		if (!account) return res.status(404).send({ message: "account not found" });
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
 	}
 });

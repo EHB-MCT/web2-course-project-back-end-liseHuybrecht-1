@@ -46,8 +46,11 @@ chatGPTConvo3
 chatGPTConvo4
 chatGPTConvo5
 chatGPTConvo6
+chatGPTConvo7
 
 https://jsschools.com/express/reference/application/put/
 https://www.geeksforgeeks.org/javascript/difference-between-put-and-patch-request/
 https://codetofun.com/express/app-put
 https://jsschools.com/express/reference/application/patch/
+
+https://www.slingacademy.com/article/node-express-mongoose-crud-example-rest-api/
