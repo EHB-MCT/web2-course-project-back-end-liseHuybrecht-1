@@ -204,15 +204,13 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
 		}
-		const db = client.db("allAcounts");
-
-		const { firstName, lastName, email, password } = req.body;
 
 		console.log(req.body);
 
-		const result = await db
-			.collection("acounts")
-			.updateOne({ firstName: req.body.firstName }, { $set: req.body });
+		const result = await collection.updateOne(
+			{ email: req.query.email },
+			{ $set: req.body },
+		);
 		console.log(req.query.firstName);
 
 		res.json(result);
