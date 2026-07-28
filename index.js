@@ -244,6 +244,7 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 		res.status(500).send({ error: "Could not get account", value: error });
 	}*/
 
+	console.log("DELETE route reached", req.params.id);
 	try {
 		const { id } = req.params;
 
