@@ -245,15 +245,18 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 	}*/
 
 	try {
-		const account = await account.finByIdAndDelete(req.query._id);
-		if (!account)
-			return res
-				.status(404)
-				.send({
-					message: "account not found",
-					code: error.code,
-					stack: error.stack,
-				});
+		const { id } = req.params;
+		const deleteAccount = await acount.findByIdAndDelete(id);
+		if (!deleteAccount)
+			return res.status(404).send({
+				message: "account not found",
+				code: error.code,
+				stack: error.stack,
+			});
+
+		res
+			.status(200)
+			.json({ message: "Account deleted successfully", deleteAccount });
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
