@@ -196,7 +196,9 @@ app.use(express.json());
 app.patch("/updateAccountName", async (req, res) => {
 	try {
 		const db = client.db("allAcounts");
-		console.log(req.body);
+		//console.log(req.body);
+
+		const { firstName, lastName, email, password } = req.body;
 
 		const result = await db
 			.collection("acounts")
