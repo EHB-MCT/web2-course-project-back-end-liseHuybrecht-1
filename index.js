@@ -245,7 +245,7 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 	}*/
 
 	try {
-		const account = await account.finByIdAndDelete(req.query.id);
+		const account = await account.finByIdAndDelete(req.query._id);
 		if (!account) return res.status(404).send({ message: "account not found" });
 	} catch (error) {
 		return res.status(500).json({
