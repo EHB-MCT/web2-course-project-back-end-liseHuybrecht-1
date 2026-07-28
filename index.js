@@ -92,6 +92,8 @@ app.get("/allAcounts", async (req, res) => {
 	try {
 		await client.connect();
 
+		const db = client.db("allAcounts");
+
 		const collection = client.db("allAcounts").collection("acounts");
 		const accounts = await collection.find({}).toArray();
 
@@ -200,6 +202,7 @@ app.patch("/updateAccountName", async (req, res) => {
 		const result = await db
 			.collection("users")
 			.updateOne({ firstName: req.query.firstName }, { $set: req.body });
+		res.json(result);
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
