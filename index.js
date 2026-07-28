@@ -227,12 +227,18 @@ app.delete("/deleteAccount", async (req, res) => {
 	try {
 		await client.connect();
 
+		const { firstName, lastName, email, password } = req.body;
+
 		const collection = client.db("allAcounts").collection("acounts");
 
 		const account = await collection.findOne({ email: req.query.email });
 
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
+		}
+
+		if (account) {
+			res.send(account);
 		}
 
 		res.status(200).send(account);
