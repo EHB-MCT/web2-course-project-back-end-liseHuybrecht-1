@@ -193,16 +193,19 @@ app.post("/addUser", async (req, res) => {
 
 app.use(express.json());
 
-app.patch("/updateAccountName", async (req, res) => {
+app.patch("/updateAccountFirstName", async (req, res) => {
 	try {
 		const db = client.db("allAcounts");
-		//console.log(req.body);
 
 		const { firstName, lastName, email, password } = req.body;
+
+		console.log(req.body);
 
 		const result = await db
 			.collection("acounts")
 			.updateOne({ firstName: req.query.firstName }, { $set: req.body });
+		console.log(req.query.firstName);
+
 		res.json(result);
 	} catch (error) {
 		return res.status(500).json({
