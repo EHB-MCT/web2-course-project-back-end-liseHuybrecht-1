@@ -203,7 +203,7 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 
 		const result = await db
 			.collection("acounts")
-			.updateOne({ firstName: req.query.firstName }, { $set: req.body });
+			.updateOne({ firstName: req.body.firstName }, { $set: req.body });
 		console.log(req.query.firstName);
 
 		res.json(result);
