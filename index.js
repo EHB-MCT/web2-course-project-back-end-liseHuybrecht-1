@@ -251,14 +251,12 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 			.collection("acounts")
 			.deleteOne({ _id: new ObjectId(id) });
 
-		if (result.deleteAccount === 0)
+		if (result.deletedCount === 0)
 			return res.status(404).json({
 				message: "account not found",
 			});
 
-		res
-			.status(200)
-			.json({ message: "Account deleted successfully", deleteAccount });
+		res.status(200).json({ message: "Account deleted successfully" });
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
