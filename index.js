@@ -7,7 +7,7 @@ require("dotenv").config();
 const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { all } = require("axios");
 
 const password = process.env.MONGODB_PASSWORD;
@@ -246,12 +246,14 @@ app.delete("/deleteAccount/:id", async (req, res) => {
 
 	try {
 		const { id } = req.params;
-		const deleteAccount = await acount.findByIdAndDelete(id);
-		if (!deleteAccount)
-			return res.status(404).send({
+
+		const result = await db
+			.collection("acounts")
+			.deleteOne({ _id: new ObjectId(id) });
+
+		if (result.deleteAccount === 0)
+			return res.status(404).json({
 				message: "account not found",
-				code: error.code,
-				stack: error.stack,
 			});
 
 		res
