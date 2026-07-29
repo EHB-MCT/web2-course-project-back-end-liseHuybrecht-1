@@ -48,11 +48,11 @@ run().catch(console.dir);
 
 app.use(bodyParser.json());
 
-app.use(
+/*app.use(
 	cors({
 		origin: "https://easy-animals.onrender.com",
 	}),
-);
+);*/
 
 /*app.get("/", (req, res) => {
 	res.send("Backend is running!");
