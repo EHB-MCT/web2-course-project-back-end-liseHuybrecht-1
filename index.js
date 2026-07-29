@@ -252,11 +252,11 @@ app.delete("/deleteAccount", async (req, res) => {
 	try {
 		const { id } = req.query;
 
-		const db = { firstName, lastName, _id, email, password };
+		//const db = { firstName, lastName, _id, email, password };
 
-		const result = await db
-			.collection("acounts")
-			.deleteOne({ _id: new ObjectId(id) });
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const result = await collection.deleteOne({ _id: new ObjectId(_id) });
 
 		if (result.deletedCount === 0)
 			return res.status(404).json({
