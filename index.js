@@ -281,11 +281,11 @@ app.get("/specificAnimal", async (req, res) => {
 			return res.status(404).send({ error: "Animal not found" });
 		}
 
-		res.status(200).send(account);
+		res.status(200).send(animal);
 	} catch (error) {
 		console.log(error);
 
-		res.status(500).send({ error: "Could not get Animal", value: error });
+		res.status(500).send({ error: "Could not get animal", value: error });
 	}
 });
 
