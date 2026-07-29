@@ -7,7 +7,7 @@ require("dotenv").config();
 const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
 
-const cors = require("cors");
+//const cors = require("cors");
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { all } = require("axios");
