@@ -7,6 +7,8 @@ require("dotenv").config();
 const port = process.env.PORT || 10000;
 const bodyParser = require("body-parser");
 
+const cors = require("cors");
+
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { all } = require("axios");
 
@@ -45,6 +47,12 @@ async function run() {
 run().catch(console.dir);
 
 app.use(bodyParser.json());
+
+app.use(
+	cors({
+		origin: "https://easy-animals.onrender.com",
+	}),
+);
 
 /*app.get("/", (req, res) => {
 	res.send("Backend is running!");
