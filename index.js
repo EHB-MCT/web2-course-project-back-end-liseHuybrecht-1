@@ -250,7 +250,7 @@ app.delete("/deleteAccount", async (req, res) => {
 
 	console.log("DELETE route reached", req.query._id);
 	try {
-		const { id } = req.query;
+		const { _id } = req.query;
 
 		//const db = { firstName, lastName, _id, email, password };
 
