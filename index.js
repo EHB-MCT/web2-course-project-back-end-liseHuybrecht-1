@@ -252,6 +252,8 @@ app.delete("/deleteAccount", async (req, res) => {
 	try {
 		const { id } = req.query;
 
+		const db = { firstName, lastName, _id, email, password };
+
 		const result = await db
 			.collection("acounts")
 			.deleteOne({ _id: new ObjectId(id) });
