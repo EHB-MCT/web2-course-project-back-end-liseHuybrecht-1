@@ -224,10 +224,6 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 });
 
 app.delete("/deleteAccount", async (req, res) => {
-	console.log("hello, delete exists");
-	console.log("delete hit", req.params.id);
-	console.log("delete hit", req.params._id);
-
 	/*try {
 		await client.connect();
 
@@ -270,5 +266,40 @@ app.delete("/deleteAccount", async (req, res) => {
 			code: error.code,
 			stack: error.stack,
 		});
+	}
+});
+
+app.get("/specificAnimal", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+
+		const animal = await collection.findOne({ animal: req.query.animal });
+
+		if (!animal) {
+			return res.status(404).send({ error: "Animal not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get Animal", value: error });
+	}
+});
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+		const animals = await collection.find({}).toArray();
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all animals", value: error });
 	}
 });

@@ -1,0 +1,306 @@
+Today 12:54 AM
+
+app.delete("/deleteAccount/:id", async (req, res) => {
+	
+try {
+		const account = await account.finByIdAndDelete(req.query._id);
+		if (!account)
+			return res
+				.status(404)
+				.send({
+					message: "account not found",
+					code: error.code,
+					stack: error.stack,
+				});
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+trying to make delete work. the current error is "cannot DELETE /deleteAccount
+
+The error Cannot DELETE /deleteAccount usually means your Express app doesn't have a route that matches the request being made. There are also a few issues in the route you've posted.
+
+1. Your route expects a URL parameter
+
+You defined:
+
+app.delete("/deleteAccount/:id", async (req, res) => {
+
+So the request must look like:
+
+DELETE /deleteAccount/64f8c1...
+
+If you're sending:
+
+DELETE /deleteAccount
+
+Express won't find a matching route, resulting in:
+
+Cannot DELETE /deleteAccount
+2. Use req.params.id, not req.query._id
+
+Since your route uses :id, retrieve it like this:
+
+const { id } = req.params;
+
+not
+
+req.query._id
+3. Typo in findByIdAndDelete
+
+You have:
+
+account.finByIdAndDelete(...)
+
+It should be:
+
+Account.findByIdAndDelete(...)
+
+assuming your Mongoose model is called Account.
+
+4. You're using account for two different things
+
+Avoid this:
+
+const account = await account.findByIdAndDelete(...);
+
+Instead:
+
+const deletedAccount = await Account.findByIdAndDelete(id);
+5. error doesn't exist in your 404 block
+
+You have:
+
+return res.status(404).send({
+    message: "account not found",
+    code: error.code,
+    stack: error.stack,
+});
+
+There is no error there. Just return:
+
+return res.status(404).json({
+    message: "Account not found",
+});
+Correct version
+app.delete("/deleteAccount/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedAccount = await Account.findByIdAndDelete(id);
+
+        if (!deletedAccount) {
+            return res.status(404).json({
+                message: "Account not found",
+            });
+        }
+
+        res.status(200).json({
+            message: "Account deleted successfully",
+            deletedAccount,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+If you're using Postman
+
+Method:
+
+DELETE
+
+URL:
+
+http://localhost:3000/deleteAccount/64f9c1d0d4d6f3a...
+
+Replace the last part with an actual MongoDB document ID.
+
+If you're using fetch
+fetch(`http://localhost:3000/deleteAccount/${id}`, {
+    method: "DELETE",
+});
+
+or with Axios:
+
+axios.delete(`http://localhost:3000/deleteAccount/${id}`);
+
+If you're still getting Cannot DELETE /deleteAccount, could you show:
+
+the request you're making (Postman, fetch, Axios, etc.),
+your server's port (e.g. app.listen(3000)), and
+whether this route is inside an Express router (e.g. router.delete(...)) or directly on app?
+
+I can see the issue now.
+
+Your route is:
+
+app.delete("/deleteAccount/:id", async (req, res) => {
+
+This expects the ID as a path parameter.
+
+But your Postman URL is:
+
+https://easy-animals.onrender.com/deleteAccount?_id=6a6622d3dac250f60c4f76f3
+
+That is sending the ID as a query parameter (?_id=...), which does not match /deleteAccount/:id.
+
+You have two options:
+
+Option 1 (recommended): Keep your route as it is
+
+Keep:
+
+app.delete("/deleteAccount/:id", ...)
+
+Then call:
+
+https://easy-animals.onrender.com/deleteAccount/6a6622d3dac250f60c4f76f3
+
+and in your code use:
+
+const { id } = req.params;
+Option 2: Use a query parameter
+
+If you want to call:
+
+/deleteAccount?_id=6a6622d3dac250f60c4f76f3
+
+then change the route to:
+
+app.delete("/deleteAccount", async (req, res) => {
+    const { _id } = req.query;
+
+    // delete using _id
+});
+One more thing
+
+Your ObjectId looks suspicious:
+
+6a6622d3dac250f60c4f76f3
+
+A MongoDB ObjectId should be 24 hexadecimal characters (0-9 and a-f).
+
+Your ID contains:
+
+...g...
+
+if that's copied exactly (or if any character is outside 0-9 and a-f), new ObjectId(id) will throw an error. Double-check that you're copying the _id directly from MongoDB.
+
+However...
+
+You also said:
+
+I am not seeing the logs I added
+
+That is important. If you're testing against:
+
+https://easy-animals.onrender.com
+
+make sure you've redeployed your latest code to Render. If Render is still running an older deployment that doesn't include the DELETE route, you'll get Cannot DELETE and never see your new console.log().
+
+My next question is: are you testing against your local server (http://localhost:10000) or against the deployed Render app (https://easy-animals.onrender.com)?
+
+i went with query, because that is how the rest of my stuff looks.
+
+That's completely fine. If the rest of your API uses query parameters, it's reasonable to keep it consistent.
+
+In that case, your route should look like this:
+
+app.delete("/deleteAccount", async (req, res) => {
+    try {
+        const { _id } = req.query;
+
+        const result = await db
+            .collection("acounts")
+            .deleteOne({ _id: new ObjectId(_id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                message: "Account not found",
+            });
+        }
+
+        res.status(200).json({
+            message: "Account deleted successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+
+And your Postman URL:
+
+DELETE https://easy-animals.onrender.com/deleteAccount?_id=6a6622d3dac250f60c4f76f3
+
+matches that route.
+
+If you're still getting Cannot DELETE /deleteAccount
+
+Then the issue is not the _id parameter anymore. It means the deployed server doesn't have that route.
+
+The two most common reasons are:
+
+Render hasn't deployed your latest code yet.
+The deployed code is different from the code you're editing locally.
+
+Since you mentioned you didn't see the console.log(), that strongly suggests the request never reached the version of the code you edited.
+
+Could you answer one question:
+
+Are you testing against https://easy-animals.onrender.com immediately after editing the code on your computer, or have you committed and pushed the changes so Render has deployed the new version?
+
+error 500, db is not defined
+
+That's progress! A 500 means the route is now being hit. The error:
+
+db is not defined
+
+means exactly what it says: you don't have a variable named db.
+
+From the code you shared earlier, you're using the MongoDB client directly, like this:
+
+const collection = client.db("allAcounts").collection("acounts");
+
+So your DELETE route should do the same instead of using db:
+
+app.delete("/deleteAccount", async (req, res) => {
+    try {
+        const { _id } = req.query;
+
+        const collection = client.db("allAcounts").collection("acounts");
+
+        const result = await collection.deleteOne({
+            _id: new ObjectId(_id),
+        });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({
+                message: "Account not found",
+            });
+        }
+
+        res.status(200).json({
+            message: "Account deleted successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message,
+        });
+    }
+});
+
+One more thing I noticed: in your GET route you call:
+
+await client.connect();
+
+If your DELETE route doesn't call client.connect(), make sure you've already connected the client elsewhere when your app starts. If not, you'll need to connect before using the collection, just as you do in your GET route.
+
+If you get another error after this change, tell me the exact 500 error message, and we'll work through it.
