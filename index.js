@@ -50,7 +50,8 @@ app.use(bodyParser.json());
 
 app.use(
 	cors({
-		origin: "https://easy-animals.onrender.com",
+		origin:
+			"https://ehb-mct.github.io/web2-course-project-front-end-liseHuybrecht-1/main.js",
 	}),
 );
 
