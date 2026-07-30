@@ -11,11 +11,9 @@ const cors = require("cors");
 
 app.use(
 	cors({
-		origin:
-			"https://ehb-mct.github.io/web2-course-project-front-end-liseHuybrecht-1",
+		origin: "https://ehb-mct.github.io", ///web2-course-project-front-end-liseHuybrecht-1
 		credentials: true,
 	}),
-	
 );
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -56,8 +54,6 @@ async function run() {
 run().catch(console.dir);
 
 app.use(bodyParser.json());
-
-
 
 /*app.get("/", (req, res) => {
 	res.send("Backend is running!");
