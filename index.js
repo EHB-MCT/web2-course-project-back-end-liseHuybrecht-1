@@ -54,6 +54,7 @@ app.use(
 			"https://ehb-mct.github.io/web2-course-project-front-end-liseHuybrecht-1",
 		credentials: true,
 	}),
+	
 );
 
 /*app.get("/", (req, res) => {
