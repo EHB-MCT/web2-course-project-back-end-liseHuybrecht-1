@@ -52,7 +52,7 @@ app.use(
 	cors({
 		origin:
 			"https://ehb-mct.github.io/web2-course-project-front-end-liseHuybrecht-1",
-			credentials = true
+		credentials: true,
 	}),
 );
 
