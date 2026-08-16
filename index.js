@@ -97,11 +97,11 @@ app.get("/account", async (req, res) => {
 	}
 });
 
-app.get("/allAcounts", async (req, res) => {
+app.get("/allAccounts", async (req, res) => {
 	try {
 		await client.connect();
 
-		const collection = client.db("allAcounts").collection("acounts");
+		const collection = client.db("allAccounts").collection("acounts");
 		const accounts = await collection.find({}).toArray();
 
 		res.status(200).send(accounts);
@@ -145,7 +145,16 @@ app.post("/addUser", async (req, res) => {
 			lastName,
 			email,
 			password: hashedPassword,
+			complete: "no",
+			complete2: "no",
+			complete3: "no",
+			complete4: "no",
+			complete5: "no",
+			complete6: "no",
+			complete7: "no",
+			complete8: "no",
 		});
+
 		console.log("hello3");
 
 		return res.status(201).send("upload succesful");
@@ -223,6 +232,103 @@ app.patch("/updateAccountFirstName", async (req, res) => {
 		//console.log(req.query.firstName);
 
 		res.json(result);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		//const collection2 = client.db("allAnimals").collection("animals");
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({ error: "Invalid animal ID" });
+		}
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+		//const animalId = Number(req.query.animalId);
+		const completeField = `complete${animalId}`;
+
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: `${completeField} updated`,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+
+		//const animal = await animal.findOne({ id: animalId });
+
+		/*if (!animal) {
+			return res.status(404).json({ error: "Animal not found" });
+		}*/
+
+		/*const result = await collection.updateOne({ email: email });
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: "complete1 updated",
+			complete1: newValue,
+		});*/
+
+		// Create the field name, e.g. "complete7"
+		//const completeField = `complete${animal.id}`;
+
+		// Update the account
+		/**const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);*/
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: `${completeField} updated`,
+			animalId: animal.id,
+			[completeField]: newValue,
+		});
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
@@ -310,5 +416,22 @@ app.get("/allAnimals", async (req, res) => {
 		console.log(error);
 
 		res.status(500).send({ error: "Could not get all animals", value: error });
+	}
+});
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
 	}
 });

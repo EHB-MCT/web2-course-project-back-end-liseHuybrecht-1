@@ -1,0 +1,978 @@
+app.patch("/updateDone1", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		//console.log(req.body);
+
+		const result = await collection.updateOne(
+			{ email: req.query.email },
+			{ complete1: req.query.complete1 },
+		);
+		//console.log(req.query.firstName);
+
+		res.json(result);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+please help. i need to update complete1 (it has multiple complete + nr). it can only go from no to yes or backwards
+
+Yes — the main issue is that your updateOne() syntax is wrong for MongoDB, and if you have fields like complete1, complete2, complete3, etc., you can update the specific field dynamically.
+
+If complete1 is currently "no" or "yes" and you want to toggle it, you can do this:
+
+app.patch("/updateDone1", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+
+		const email = req.query.email;
+		const newValue = req.query.complete1;
+
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete1 must be either 'yes' or 'no'",
+			});
+		}
+
+
+		const result = await collection.updateOne(
+			{ email: email },
+			{ $set: { complete1: newValue } }
+		);
+
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+
+		res.json({
+			message: "complete1 updated",
+			complete1: newValue,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: error.message,
+		});
+	}
+});
+If you have complete1, complete2, complete3, etc.
+
+You don't need a separate route for every number. For example, you could have:
+
+PATCH /updateDone?email=test@test.com&complete=complete3&value=yes
+
+Then:
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+
+		const email = req.query.email;
+		const field = req.query.complete;
+		const value = req.query.value;
+
+
+		// Only allow fields like complete1, complete2, complete3...
+		if (!/^complete\d+$/.test(field)) {
+			return res.status(400).json({
+				error: "Invalid complete field",
+			});
+		}
+
+
+		// Only allow yes/no
+		if (value !== "yes" && value !== "no") {
+			return res.status(400).json({
+				error: "Value must be 'yes' or 'no'",
+			});
+		}
+
+
+		const result = await collection.updateOne(
+			{ email },
+			{ $set: { [field]: value } }
+		);
+
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+
+		res.json({
+			message: `${field} updated`,
+			[field]: value,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: error.message,
+		});
+	}
+});
+
+The important part is:
+
+{ $set: { [field]: value } }
+
+The square brackets make field dynamic. So if:
+
+field = "complete7"
+value = "yes"
+
+MongoDB receives:
+
+{
+	$set: {
+		complete7: "yes"
+	}
+}
+
+And if you send "no" instead, it changes it back:
+
+complete7: "no"
+
+Also, your original:
+
+{ complete1: req.query.complete1 }
+
+is not the correct MongoDB update operation. You need $set:
+
+{ $set: { complete1: req.query.complete1 } }
+
+If by "it can only go from no to yes or backwards" you mean you want the server itself to automatically toggle no → yes → no, rather than sending yes/no from the frontend, that's slightly different and can be made even simpler.
+
+Almost — your frontend idea is right, but your backend still has several leftover pieces from the previous version. Also, there's one bigger issue: answer.complete won't magically exist in /allAnimals unless your backend adds it.
+
+Let's fix this in small pieces.
+
+1. Frontend updateComplete
+
+This part is basically correct:
+
+function updateComplete(animalId, currentValue) {
+	const newValue = currentValue === "yes" ? "no" : "yes";
+
+
+	fetch(
+		`https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+			email,
+		)}&animalId=${animalId}&complete=${newValue}`,
+		{
+			method: "PATCH",
+			credentials: "include",
+		},
+	)
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+			getData();
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+}
+
+That's fine.
+
+2. Your getData() needs one change
+
+You currently have:
+
+document.getElementById("videos").innerHTML = html;
+
+inside your forEach.
+
+Move it outside the forEach.
+
+So:
+
+function getData() {
+	fetch("https://easy-animals.onrender.com/allAnimals", {
+		credentials: "include",
+	})
+		.then((response) => response.json())
+		.then((animals) => {
+			let html = "";
+
+
+			animals.forEach((answer) => {
+				const checkImage =
+					answer.complete === "yes"
+						? "assets/checkmark.png"
+						: "assets/Cross.png";
+
+
+				html += `
+					<div class="video">
+						<a class="thumbnail" href="">
+							<img
+								class="thumbnailImage"
+								src="assets/chicken.png"
+								alt="Thumbnail"
+							/>
+						</a>
+
+
+						<div class="description">
+							<div class="words">
+								<a class="title">${answer.animal}</a>
+
+
+								<div class="difficulty">
+									<img src="assets/emptyStar.png" class="star" />
+									<img src="assets/emptyStar.png" class="star" />
+									<img src="assets/emptyStar.png" class="star" />
+									<img src="assets/emptyStar.png" class="star" />
+									<img src="assets/emptyStar.png" class="star" />
+								</div>
+							</div>
+
+
+							<div class="finishedCheck">
+								<button onclick="updateComplete(${answer.id}, '${answer.complete}')">
+									<img src="${checkImage}" alt="Complete" />
+								</button>
+							</div>
+						</div>
+					</div>
+				`;
+			});
+
+
+			// IMPORTANT: outside forEach
+			document.getElementById("videos").innerHTML = html;
+		});
+}
+
+You also don't need this anymore:
+
+document.querySelectorAll(".checkButton")
+
+because you're using:
+
+onclick="updateComplete(...)"
+
+So remove that entire section.
+
+3. Your backend needs fixing
+
+This:
+
+const collection = client.db("allAcounts").collection("acounts");
+const collection = client.db("allAnimals").collection("animals");
+
+is invalid because you're declaring collection twice.
+
+And you don't need the animals collection at all.
+
+Your backend should be:
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const accounts = client.db("allAcounts").collection("acounts");
+
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({
+				error: "Invalid animal ID",
+			});
+		}
+
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+
+		const completeField = `complete${animalId}`;
+
+
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+
+		res.json({
+			message: `${completeField} updated`,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+Notice particularly:
+
+const newValue = req.query.complete;
+
+not
+
+req.query.complete1
+
+because the frontend is sending:
+
+complete=yes
+4. There's one missing piece
+
+This is the important part.
+
+You have:
+
+answer.complete
+
+But your animals probably look something like:
+
+{
+	id: 1,
+	animal: "Chicken"
+}
+
+while your account looks something like:
+
+{
+	email: "whatever",
+	complete1: "yes",
+	complete2: "no",
+	complete3: "yes"
+}
+
+Therefore /allAnimals needs to somehow give the frontend the appropriate completion value.
+
+For example, if:
+
+answer.id = 7
+
+then you want:
+
+answer.complete = account.complete7
+
+so the frontend can do:
+
+const checkImage =
+	answer.complete === "yes"
+		? "assets/checkmark.png"
+		: "assets/Cross.png";
+
+That's the part we haven't connected yet.
+
+If you paste your current app.get("/allAnimals"... backend code, I can modify that exact code so each animal comes back with its corresponding completeN value. Then your checkmark/Cross system will work end-to-end.
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+		const animals = await collection.find({}).toArray();
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all animals", value: error });
+	}
+});
+
+short and it works, my favorite
+
+Yep 😄 Keep it short. You can leave /allAnimals exactly as it is.
+
+The only problem is: answer.complete doesn't come from /allAnimals, because that endpoint only returns the animals.
+
+If you want to keep things simple, make a separate endpoint that returns the logged-in account's completion values.
+
+For example:
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne({ email: req.query.email });
+
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
+});
+
+Then your frontend can get both:
+
+const animals = await fetch("https://easy-animals.onrender.com/allAnimals").then(r => r.json());
+
+
+const account = await fetch(
+	`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`
+).then(r => r.json());
+
+And when creating each animal:
+
+const complete = account[`complete${answer.id}`];
+
+
+const checkImage =
+	complete === "yes"
+		? "assets/checkmark.png"
+		: "assets/Cross.png";
+
+Then:
+
+<button onclick="updateComplete(${answer.id}, '${complete}')">
+	<img src="${checkImage}" alt="Complete">
+</button>
+
+So you get exactly what you want:
+
+Animal ID 7 → account.complete7 → correct image.
+
+And your existing /allAnimals route stays nice and tiny. 👍
+
+function getData() {
+	console.log("hello from getData");
+
+	fetch("https://easy-animals.onrender.com/allAnimals", {
+		credentials: "include",
+	})
+		.then(function (response) {
+			console.log("hello from response");
+			return response.json();
+		})
+		.then(function (animals) {
+			console.log(animals);
+			let html = "";
+			animals.forEach((answer) => {
+				console.log(answer);
+
+				console.log(answer.animal);
+
+				/*const checkImage =
+					answer.complete === "yes"
+						? "assets/checkmark.png"
+						: "assets/Cross.png";
+*/
+				//${answer.video}
+
+				html += <div class="video">
+					<a class="thumbnail" href=""
+						><img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+					/></a>
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" alt="" class="star1 star" />
+								<img src="assets/emptyStar.png" alt="" class="star2 star" />
+								<img src="assets/emptyStar.png" alt="" class="star3 star" />
+								<img src="assets/emptyStar.png" alt="" class="star4 star" />
+								<img src="assets/emptyStar.png" alt="" class="star5 star" />
+							</div>
+						</div>
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${answer.complete}')">
+									<img src="${checkImage}" alt="Complete" />
+								</button>
+						</div>
+					</div>
+				</div>;
+			});
+			document.getElementById("videos").innerHTML = html;
+
+			// Add click events to all the generated buttons
+			/*document.querySelectorAll(".checkButton").forEach((button) => {
+				button.addEventListener("click", function () {
+					const animalId = this.dataset.animalId;
+					const currentValue = this.dataset.complete;
+
+					const newValue = currentValue === "yes" ? "no" : "yes";
+
+					console.log("Animal:", animalId);
+					console.log("Changing:", currentValue, "→", newValue);
+
+					updateComplete(animalId, newValue);
+				});
+			});*/
+		});
+}
+
+//TODO: login
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+const newAccountButton = document.getElementsByClassName("newAccount");
+const yesButton = document.getElementsByClassName("yesButton");
+
+const popup = document.getElementById("createAccountPopup");
+
+newAccountButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+	// Show popup
+	popup.classList.add("show");
+});
+
+// Press "Yes"
+yesButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	createAccount(email, password);
+});
+
+frontend js
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+		const animals = await collection.find({}).toArray();
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all animals", value: error });
+	}
+});
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
+});
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		//const collection2 = client.db("allAnimals").collection("animals");
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete1;
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({ error: "Invalid animal ID" });
+		}
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+		//const animalId = Number(req.query.animalId);
+		const completeField = complete${animalId};
+
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: ${completeField} updated,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+
+		//const animal = await animal.findOne({ id: animalId });
+
+		/*if (!animal) {
+			return res.status(404).json({ error: "Animal not found" });
+		}*/
+
+		/*const result = await collection.updateOne({ email: email });
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: "complete1 updated",
+			complete1: newValue,
+		});*/
+
+		// Create the field name, e.g. "complete7"
+		const completeField = complete${animal.id};
+
+		// Update the account
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: ${completeField} updated,
+			animalId: animal.id,
+			[completeField]: newValue,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+backend
+
+
+
+Yep — you're very close. The cleanest solution is to make getData() fetch both /allAnimals and /complete, then match them using the animal ID.
+
+Also, your updateDone backend currently has some old code after res.json() that should be deleted. And req.query.complete1 should be req.query.complete.
+
+Frontend
+
+Replace your getData() with:
+
+async function getData() {
+	try {
+		const animals = await fetch(
+			"https://easy-animals.onrender.com/allAnimals",
+			{ credentials: "include" }
+		).then((res) => res.json());
+
+
+		const account = await fetch(
+			`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`,
+			{ credentials: "include" }
+		).then((res) => res.json());
+
+
+		let html = "";
+
+
+		animals.forEach((answer) => {
+			const complete = account[`complete${answer.id}`];
+
+
+			const checkImage =
+				complete === "yes"
+					? "assets/checkmark.png"
+					: "assets/Cross.png";
+
+
+			html += `
+				<div class="video">
+					<a class="thumbnail" href="">
+						<img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+						/>
+					</a>
+
+
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+
+
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+							</div>
+						</div>
+
+
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${complete}')">
+								<img src="${checkImage}" alt="Complete" />
+							</button>
+						</div>
+					</div>
+				</div>
+			`;
+		});
+
+
+		document.getElementById("videos").innerHTML = html;
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+The important line is:
+
+const complete = account[`complete${answer.id}`];
+
+So if the animal is:
+
+{
+	id: 7,
+	animal: "Chicken"
+}
+
+and the account has:
+
+complete7: "yes"
+
+then:
+
+complete === "yes"
+
+and you get:
+
+checkmark.png
+
+If it's "no":
+
+Cross.png
+Frontend update function
+
+Keep this:
+
+function updateComplete(animalId, currentValue) {
+	const newValue = currentValue === "yes" ? "no" : "yes";
+
+
+	fetch(
+		`https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+			email
+		)}&animalId=${animalId}&complete=${newValue}`,
+		{
+			method: "PATCH",
+			credentials: "include",
+		}
+	)
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+			getData();
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+}
+
+So clicking:
+
+Cross → PATCH → complete7=yes → getData() → Checkmark
+
+and:
+
+Checkmark → PATCH → complete7=no → getData() → Cross
+Backend /updateDone
+
+You have some old code left in there. Delete all of it and use just:
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const accounts = client.db("allAcounts").collection("acounts");
+
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({
+				error: "Invalid animal ID",
+			});
+		}
+
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+
+		const completeField = `complete${animalId}`;
+
+
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			}
+		);
+
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+
+		res.json({
+			message: `${completeField} updated`,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+Notice this correction:
+
+const newValue = req.query.complete;
+
+not:
+
+const newValue = req.query.complete1;
+One other thing in your login code
+
+You have:
+
+const newAccountButton = document.getElementsByClassName("newAccount");
+const yesButton = document.getElementsByClassName("yesButton");
+
+getElementsByClassName() returns a collection, so this:
+
+newAccountButton.addEventListener(...)
+
+will not work.
+
+If there is only one of each, use:
+
+const newAccountButton = document.querySelector(".newAccount");
+const yesButton = document.querySelector(".yesButton");
+
+Then your existing addEventListener() works.
+
+But for the animal/checkmark part, the main flow is now:
+
+/allAnimals
+    ↓
+animal.id = 7
+    ↓
+/complete
+    ↓
+account.complete7
+    ↓
+yes → checkmark.png
+no  → Cross.png
+    ↓
+click
+    ↓
+/updateDone?animalId=7&complete=yes/no
+    ↓
+MongoDB complete7 changes
+    ↓
+getData()
+    ↓
+new image
+
+That's all you need.
