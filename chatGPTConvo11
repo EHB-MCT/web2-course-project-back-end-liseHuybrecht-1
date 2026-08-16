@@ -1,0 +1,4636 @@
+Today 6:23 PM
+//TODO: fetch backend
+/*async function getBackend() {
+	const url = "https://easy-animals.onrender.com";
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(Response status: ${response.status});
+		}
+		const result = await response.json();
+		console.log(result);
+	} catch (error) {
+		console.error(error.message);
+	}
+}*/
+
+//const { send } = require("vite");
+
+console.log("main.js exists");
+
+function init() {
+	getData();
+}
+
+function updateComplete(animalId, currentValue) {
+	const newValue = currentValue === "yes" ? "no" : "yes";
+
+	fetch(
+		https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+			email,
+		)}&animalId=${animalId}&complete=${newValue},
+		{
+			method: "PATCH",
+			credentials: "include",
+		},
+	)
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+
+			// Reload the animals so the correct image is displayed
+			getData();
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+}
+
+/*async function getData() {
+	console.log("hello from getData");
+
+	const animals = await fetch("https://easy-animals.onrender.com/allAnimals", {
+		credentials: "include",
+	})
+		.then(function (response) {
+			console.log("hello from response");
+			return response.json();
+		})
+		.then(function (animals) {
+			console.log(animals);
+			let html = "";
+			animals.forEach((answer) => {
+				console.log(answer);
+
+				console.log(answer.animal);
+
+				/*const checkImage =
+					answer.complete === "yes"
+						? "assets/checkmark.png"
+						: "assets/Cross.png";
+*/
+//${answer.video}
+/*
+				html += <div class="video">
+					<a class="thumbnail" href=""
+						><img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+					/></a>
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" alt="" class="star1 star" />
+								<img src="assets/emptyStar.png" alt="" class="star2 star" />
+								<img src="assets/emptyStar.png" alt="" class="star3 star" />
+								<img src="assets/emptyStar.png" alt="" class="star4 star" />
+								<img src="assets/emptyStar.png" alt="" class="star5 star" />
+							</div>
+						</div>
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${answer.complete}')">
+									<img src="${checkImage}" alt="Complete" />
+								</button>
+						</div>
+					</div>
+				</div>;
+			});
+			document.getElementById("videos").innerHTML = html;
+
+			// Add click events to all the generated buttons
+			/*document.querySelectorAll(".checkButton").forEach((button) => {
+				button.addEventListener("click", function () {
+					const animalId = this.dataset.animalId;
+					const currentValue = this.dataset.complete;
+
+					const newValue = currentValue === "yes" ? "no" : "yes";
+
+					console.log("Animal:", animalId);
+					console.log("Changing:", currentValue, "→", newValue);
+
+					updateComplete(animalId, newValue);
+				});
+			});*/
+//});
+//}*/
+
+async function getData() {
+	try {
+		const animals = await fetch(
+			"https://easy-animals.onrender.com/allAnimals",
+			{ credentials: "include" },
+		).then((res) => res.json());
+
+		const account = await fetch(
+			https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)},
+			{ credentials: "include" },
+		).then((res) => res.json());
+
+		let html = "";
+
+		animals.forEach((answer) => {
+			const complete = account[complete${answer.id}];
+
+			const checkImage =
+				complete === "yes" ? "assets/checkmark.png" : "assets/Cross.png";
+
+			html += 
+				<div class="video">
+					<a class="thumbnail" href="">
+						<img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+						/>
+					</a>
+
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+							</div>
+						</div>
+
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${complete}')">
+								<img src="${checkImage}" alt="Complete" />
+							</button>
+						</div>
+					</div>
+				</div>
+			;
+		});
+
+		document.getElementById("DOMContentLoaded", "videos").innerHTML = html;
+	} catch (error) {
+		//console.error(error);
+		console.log(error);
+	}
+}
+
+init();
+
+main.js
+
+
+//TODO: login
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+const newAccountButton = document.querySelector(".newAccount");
+const yesButton = document.querySelector(".yesButton");
+const signIn = document.querySelector(".signIn");
+
+const popup = document.getElementById("popup");
+
+/*signIn.addEventListener("click", function () {
+	getDataAccounts();
+});
+
+console.log("hello, sign in work?");*/
+
+document.querySelector(".signIn").addEventListener("click", function () {
+	getDataAccounts();
+});
+
+console.log("hello, something should work");
+
+newAccountButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+	// Show popup
+	popup.classList.add("show");
+});
+
+// Press "Yes"
+yesButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	createAccount(email, password);
+});
+
+async function getDataAccounts() {
+	//const email = document.getElementById("email").value;
+	//const password = document.getElementById("password").value;
+
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	try {
+		const response = await fetch(
+			"https://easy-animals.onrender.com/allAccounts",
+			{
+				credentials: "include",
+			},
+		);
+
+		if (!response.ok) {
+			throw new Error("Could not get account");
+		}
+		//const accounts = await response.json();
+		const data = await response.json();
+
+		// Look for an account with this email
+		const account = data.find(function (account) {
+			return account.email === email;
+		});
+
+		if (account) {
+			// Email already exists
+			if (account.password === password) {
+				console.log("Login success");
+				window.location.href = "index2.html";
+			} else {
+				console.log("Wrong password");
+				alert("Incorrect password.");
+			}
+		} else {
+			// Email doesn't exist, so create a new account
+			//createAccount(email, password);
+			popup.classList.add("show");
+		}
+
+		/*then(function (accounts) {
+			console.log(accounts);
+
+			const data = accounts.data;
+
+			const account = data.find(function (account) {
+				return account.email === email && account.password === password;
+			});
+			if (account) {
+				console.log("login succes");
+				window.location.href = "index2.html";
+			} else {
+				createAccount();
+			}
+		});*/
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+async function createAccount(email, password /*, firstName, lastName*/) {
+	try {
+		const response = await fetch("https://easy-animals.onrender.com/addUser", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({
+				email: email,
+				password: password,
+				//firstName: firstName,
+				//lastName: lastName,
+			}),
+		});
+		if (!response.ok) {
+			throw new Error("Could not create account");
+		}
+		//.then(
+		/*function (newAccount) {
+			console.log(newAccount);
+		}.then(function (upload) {
+			upload.email;
+			let popup = document.getElementsByClassName("popup");
+			popup.classList.toggle("show");
+		}),
+		send.addEventListener(""),*/
+		const newAccount = await response.json();
+
+		console.log("Account created:", newAccount);
+
+		// Hide popup
+		popup.classList.remove("show");
+
+		// Account was successfully created
+		window.location.href = "index2.html";
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+/*document.getElementsById("loginPage").addEventlistener("submit", (event) => {
+	event.preventDefault();
+
+	getDataAccounts();
+
+	let account = {};
+	account.firstName = document.getElementById("firstName").value;
+	account.lastName = document.getElementById("lastName").value;
+	account.email = document.getElementById("email").value;
+	account.password = document.getElementById("password").value;
+
+	/*getData("https://easy-animals.onrender.com/allAcounts", "POST", user).then(
+			(data) => {
+				console.log(data);
+			},
+		);*/
+//});
+
+//TODO: difficulty
+
+//TODO: done/ not done
+
+main2.js
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>main</title>
+		<link rel="icon" href="assets/chicken.png" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+
+	<body>
+		<header>
+			<div class="logoDiv">
+				<a href="#" class="logo"
+					><img class="logo" src="assets/FullLogo.png" alt="Logo"
+				/></a>
+			</div>
+		</header>
+
+		<div class="loginPage" id="loginPage">
+			<h2>Login</h2>
+			<div class="email">
+				<p>E-mail</p>
+				<input class="email" type="email" id="email" />
+			</div>
+			<div class="password">
+				<p>Password</p>
+				<input class="password" type="password" id="password" />
+			</div>
+			<button class="signIn" id="signIn">Sign in</button>
+			<button class="newAccount">Create new account</button>
+		</div>
+		<div class="popup" id="popup">
+			<span class="popuptext"
+				><p>Want to create a new account with this info?</p>
+				<button class="yesButton">Yes</button></span
+			>
+		</div>
+		<style>
+			.loginPage {
+				display: flex;
+				flex-direction: column;
+				margin-top: 150px;
+				align-items: center;
+				align-self: center;
+				align-content: center;
+			}
+
+			.popup {
+				display: none;
+				position: fixed;
+				inset: 0;
+
+				background: rgba(0, 0, 0, 0.5);
+
+				justify-content: center;
+				align-items: center;
+			}
+
+			.popup.show {
+				display: flex;
+			}
+
+			.popuptext {
+				background: white;
+				padding: 30px;
+				border-radius: 10px;
+				text-align: center;
+			}
+
+			.yesButton {
+				margin: 5px;
+				padding: 10px 20px;
+				cursor: pointer;
+			}
+			button {
+				margin: 20px;
+			}
+		</style>
+		<script src="main.js" defer></script>
+		<script src="main2.js" defer></script>
+	</body>
+</html>
+
+
+index.js
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<!--<link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>main</title>
+		<link rel="icon" href="assets/chicken.png" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+
+	<body>
+		<!-- rebuild -->
+		<header>
+			<div class="logoDiv">
+				<a href="index2.html" class="logo"
+					><img class="logo" src="assets/FullLogo.png" alt="Logo"
+				/></a>
+			</div>
+			<div class="accountDiv">
+				<a class="nameAccountholder" href="acount.html">Account</a>
+				<!--knop, js-->
+				<a href="">
+					<img class="account" src="assets/chicken.png" alt="" />
+				</a>
+			</div>
+		</header>
+
+		<div class="selectables">
+			<div class="filter">
+				<div class="filterNoBackground">
+					<div class="topFilter">
+						<h1 class="filterTitle">Filter</h1>
+						<input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" />
+						<label for="vehicle1"> Human</label><br />
+						<input type="checkbox" id="vehicle2" name="vehicle2" value="Car" />
+						<label for="vehicle2"> Bird</label><br />
+						<input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" />
+						<label for="vehicle3"> Other</label><br />
+					</div>
+					<div class="bottomFilter">
+						<div>Done</div>
+						<button>Off</button>
+						<button><img src="assets/checkmark.png" alt="" /></button>
+						<div>difficulty</div>
+						<button><img src="assets/emptyStar.png" alt="star1" /></button
+						><button><img src="assets/emptyStar.png" alt="star2" /></button
+						><button><img src="assets/emptyStar.png" alt="star3" /></button
+						><button><img src="assets/emptyStar.png" alt="star4" /></button
+						><button><img src="assets/emptyStar.png" alt="star5" /></button>
+					</div>
+				</div>
+			</div>
+			<div class="videos" id="videos">
+				<div class="video" id="video">
+					<a class="thumbnail" href=""
+						><img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+					/></a>
+					<div class="description">
+						<div class="words">
+							<a class="title">AnimalName</a>
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" alt="" class="star1 star" />
+								<img src="assets/emptyStar.png" alt="" class="star2 star" />
+								<img src="assets/emptyStar.png" alt="" class="star3 star" />
+								<img src="assets/emptyStar.png" alt="" class="star4 star" />
+								<img src="assets/emptyStar.png" alt="" class="star5 star" />
+							</div>
+						</div>
+						<div class="finishedCheck">
+							<button><img src="assets/Cross.png" alt="" /></button>
+
+							<!--<img src="assets/checkmark.png" alt="" />-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="main.js" defer></script>
+	</body>
+	<style>
+		.video {
+			height: 190px;
+			margin: 10px;
+		}
+		.thumbnail {
+			height: 100px;
+			align-items: center;
+			align-self: center;
+			display: flex;
+			border-style: solid;
+			border-color: black;
+			padding: 10px;
+			border-width: 3px;
+		}
+		.words {
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+			margin: 5px;
+			margin-bottom: 0px;
+			width: 150px;
+		}
+		.thumbnailImage {
+			height: inherit;
+			align-self: center;
+			padding-left: 53px;
+		}
+		.selectables {
+			display: flex;
+
+			margin-top: 120px;
+		}
+		.filter {
+			background-size: 300px;
+			margin-bottom: 0;
+			border-right: black;
+			border-right-style: solid;
+			border-width: 3px;
+		}
+		.filterNoBackground {
+			margin-left: 20px;
+		}
+		.description {
+			display: flex;
+			flex-direction: row;
+			height: 70px;
+		}
+		.finishedCheck {
+			display: flex;
+			align-items: flex-end;
+			margin-left: auto;
+			height: 55px;
+		}
+		.filterTitle {
+			color: #ef3d3d;
+			border-bottom-style: solid;
+			border-color: black;
+			width: 80%;
+			border-width: 3px;
+		}
+		body {
+			font-family: Verdana, Geneva, Tahoma, sans-serif;
+		}
+		.difficulty {
+			margin: 0;
+			margin-top: 10px;
+		}
+		.star {
+			height: 20px;
+		}
+		.account {
+			height: 60px;
+		}
+		.bottomFilter {
+			margin-top: 100%;
+		}
+	</style>
+</html>
+
+
+index2.js
+
+//RUN SERVER, VERY IMPORTANT
+const { log, error } = require("console");
+const express = require("express");
+const fs = require("fs/promises");
+const app = express();
+require("dotenv").config();
+const port = process.env.PORT || 10000;
+const bodyParser = require("body-parser");
+
+const cors = require("cors");
+
+app.use(
+	cors({
+		origin: "https://ehb-mct.github.io", ///web2-course-project-front-end-liseHuybrecht-1
+		credentials: true,
+	}),
+);
+
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { all } = require("axios");
+
+const password = process.env.MONGODB_PASSWORD;
+
+const URI = process.env.MONGODB_URI;
+
+const uri = mongodb+srv://lihuybrecht_db_user:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0;
+
+//console.log(process.env.MONGODB_URI);
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+	serverApi: {
+		version: ServerApiVersion.v1,
+		strict: true,
+		deprecationErrors: true,
+	},
+});
+
+//app.use(express.static("publicFolder"));
+async function run() {
+	try {
+		//const allUsers = x;
+		// Connect the client to the server	(optional starting in v4.7)
+		await client.connect();
+		// Send a ping to confirm a successful connection
+		await client.db("admin").command({ ping: 1 });
+		console.log(
+			"Pinged your deployment. You successfully connected to MongoDB!",
+		);
+	} finally {
+		// Ensures that the client will close when you finish/error
+		await client.close();
+	}
+}
+run().catch(console.dir);
+
+app.use(bodyParser.json());
+
+/*app.get("/", (req, res) => {
+	res.send("Backend is running!");
+});*/
+
+app.listen(port, () => {
+	console.log(app listening on port https://easy-animals.onrender.com);
+	console.log(port);
+	console.log(GET /acounts - Get all acounts);
+	//console.log( MONGO_URI: ${process.env.MONGODB_URI});
+	//console.log(process.env.YOUR_VARIABLE_NAME);
+});
+
+app.get("/", async (req, res) => {
+	try {
+		res.redirect("info.html");
+
+		const buffer = await fs.readFile("", { encode: "utf8" });
+	} catch (error) {
+		res.status(500).send("Server error, try again later");
+	}
+});
+
+app.get("/account", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}
+});
+
+app.get("/allAccounts", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		const accounts = await collection.find({}).toArray();
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	}
+});
+
+app.use(express.json());
+app.post("/addUser", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
+
+		if (!firstName || !lastName || !email || !password) {
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			return res.status(400).send("missing info");
+		}
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const existingUsers = await collection.findOne({ email });
+
+		console.log("hello1");
+
+		if (existingUsers) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+
+		//import bcrypt from "bcrypt";
+		console.log("hello2");
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+			complete: "no",
+			complete2: "no",
+			complete3: "no",
+			complete4: "no",
+			complete5: "no",
+			complete6: "no",
+			complete7: "no",
+			complete8: "no",
+		});
+
+		console.log("hello3");
+
+		return res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+/*app.put("/updateAccount", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		});
+
+		return res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+		//res.status(500).send({ error: "Could not update account", value: error });
+	}
+});*/
+
+app.use(express.json());
+
+app.patch("/updateAccountFirstName", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		//console.log(req.body);
+
+		const result = await collection.updateOne(
+			{ email: req.query.email },
+			{ $set: req.body },
+		);
+		//console.log(req.query.firstName);
+
+		res.json(result);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		//const collection2 = client.db("allAnimals").collection("animals");
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({ error: "Invalid animal ID" });
+		}
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+		//const animalId = Number(req.query.animalId);
+		const completeField = complete${animalId};
+
+		const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: ${completeField} updated,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+
+		//const animal = await animal.findOne({ id: animalId });
+
+		/*if (!animal) {
+			return res.status(404).json({ error: "Animal not found" });
+		}*/
+
+		/*const result = await collection.updateOne({ email: email });
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: "complete1 updated",
+			complete1: newValue,
+		});*/
+
+		// Create the field name, e.g. "complete7"
+		//const completeField = complete${animal.id};
+
+		// Update the account
+		/**const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);*/
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: ${completeField} updated,
+			animalId: animal.id,
+			[completeField]: newValue,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.delete("/deleteAccount", async (req, res) => {
+	/*try {
+		await client.connect();
+
+		const { firstName, lastName, email, password } = req.body;
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ id: req.query.id });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}*/
+
+	console.log("DELETE route reached", req.query._id);
+	try {
+		const { _id } = req.query;
+
+		//const db = { firstName, lastName, _id, email, password };
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const result = await collection.deleteOne({ _id: new ObjectId(_id) });
+
+		if (result.deletedCount === 0)
+			return res.status(404).json({
+				message: "account not found",
+			});
+
+		res.status(200).json({ message: "Account deleted successfully" });
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.get("/specificAnimal", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+
+		const animal = await collection.findOne({ animal: req.query.animal });
+
+		if (!animal) {
+			return res.status(404).send({ error: "Animal not found" });
+		}
+
+		res.status(200).send(animal);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get animal", value: error });
+	}
+});
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+		const animals = await collection.find({}).toArray();
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all animals", value: error });
+	}
+});
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
+});
+
+and lastly, my backend.
+
+some things dont work, some things do. how can i fix this?
+could you also specify when you talk about backend and when you talk abnout frontend? could you also specify the file and around what line i nee to be?
+
+Yes. There are several separate problems here, and a few of them cause other problems to appear. The good news is that your overall structure is workable.
+
+The biggest problems are:
+
+Frontend: main.js is loaded on your login page even though it is meant for the animal page.
+Frontend: email is not defined/persisted after login.
+Frontend: getElementById("DOMContentLoaded", "videos") is incorrect.
+Frontend/backend: your frontend creates an account with only email and password, but the backend requires firstName and lastName.
+Frontend/backend: the backend hashes passwords with bcrypt, but the login frontend compares the password as plain text.
+Backend: /updateDone uses accounts.updateOne(...), but accounts doesn't exist there. You created collection.
+Backend: /updateDone contains duplicated/unreachable code after res.json().
+Backend: you're exposing all accounts and their password hashes through /allAccounts. That's a serious security problem.
+Backend: your account fields are complete, complete2, complete3, etc., while your frontend expects complete1, complete2, etc.
+
+I'd fix these in this order.
+
+1. FRONTEND — Don't load main.js on the login page
+File: your login HTML
+
+Near the bottom of the login HTML, you currently have:
+
+<script src="main.js" defer></script>
+<script src="main2.js" defer></script>
+
+This is a problem.
+
+main.js immediately does:
+
+function init() {
+	getData();
+}
+
+
+init();
+
+So when you open the login page, main.js tries to load the animal data.
+
+It also eventually uses:
+
+email
+
+but there is no email variable defined globally.
+
+Fix
+
+On the login page, remove:
+
+<script src="main.js" defer></script>
+
+and keep only your login JavaScript:
+
+<script src="main2.js" defer></script>
+
+Your animal page (index.html) should have:
+
+<script src="main.js" defer></script>
+
+So the arrangement should be:
+
+Login page
+login HTML
+   ↓
+main2.js
+   ↓
+login/create account
+Animal page
+index.html
+   ↓
+main.js
+   ↓
+get animals / update completion
+
+This alone should eliminate a number of weird errors.
+
+2. FRONTEND — email doesn't exist on the animal page
+File: main.js
+
+At approximately line 20–40, you have:
+
+function updateComplete(animalId, currentValue) {
+	const newValue = currentValue === "yes" ? "no" : "yes";
+
+
+	fetch(
+		`https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+			email,
+		)}&animalId=${animalId}&complete=${newValue}`,
+
+The problem is:
+
+email
+
+doesn't exist.
+
+You define:
+
+const emailInput = document.getElementById("email");
+
+in your login code, but that variable only exists on the login page.
+
+After you go from login → index2.html, you also don't automatically have the email.
+
+Quick functional fix
+
+When login succeeds, save the email.
+
+File: main2.js
+
+Find:
+
+if (account.password === password) {
+	console.log("Login success");
+	window.location.href = "index2.html";
+}
+
+Don't use that version anyway, because of the password issue I'll explain below.
+
+For a temporary/simple project solution, after successful login:
+
+localStorage.setItem("email", email);
+window.location.href = "index2.html";
+
+Then in main.js, near the top:
+
+const email = localStorage.getItem("email");
+
+
+if (!email) {
+	window.location.href = "index.html";
+}
+
+So main.js can use:
+
+email
+
+because it now comes from:
+
+localStorage.getItem("email")
+Important
+
+This is okay as a simple school project workaround, but it is not real authentication. A user can modify localStorage.
+
+A proper application should use a login endpoint + session/JWT and let the backend determine who the user is.
+
+3. FRONTEND — Your getElementById is wrong
+File: main.js
+
+Near the bottom of getData(), you have:
+
+document.getElementById("DOMContentLoaded", "videos").innerHTML = html;
+
+This is definitely wrong.
+
+getElementById() only takes one argument.
+
+You want the element whose ID is:
+
+<div class="videos" id="videos">
+
+So change it to:
+
+document.getElementById("videos").innerHTML = html;
+
+This is probably one of the reasons your animals aren't appearing.
+
+4. FRONTEND/BACKEND — Your account creation currently cannot work
+
+This is a very important mismatch.
+
+FRONTEND
+File: main2.js
+
+Your createAccount() sends:
+
+body: JSON.stringify({
+	email: email,
+	password: password,
+}),
+
+So the backend receives:
+
+{
+  "email": "...",
+  "password": "..."
+}
+BACKEND
+File: index2.js
+
+Your /addUser endpoint does:
+
+const { firstName, lastName, email, password } = req.body;
+
+and then:
+
+if (!firstName || !lastName || !email || !password) {
+	return res.status(400).send("missing info");
+}
+
+Therefore the backend says:
+
+You didn't give me firstName and lastName.
+
+And returns HTTP 400.
+
+You need to choose one approach.
+
+If your application doesn't currently ask for first/last name, the simplest fix is to remove them from the backend requirement.
+
+Change approximately around your /addUser route from:
+
+if (!firstName || !lastName || !email || !password) {
+	return res.status(400).send("missing info");
+}
+
+to:
+
+if (!email || !password) {
+	return res.status(400).send("Email and password are required");
+}
+
+Then when inserting:
+
+await collection.insertOne({
+	email,
+	password: hashedPassword,
+	complete1: "no",
+	complete2: "no",
+	complete3: "no",
+	complete4: "no",
+	complete5: "no",
+	complete6: "no",
+	complete7: "no",
+	complete8: "no",
+});
+
+Notice I also changed complete to complete1.
+
+I'll explain why below.
+
+5. FRONTEND/BACKEND — Your password login is incompatible with bcrypt
+
+This is another major one.
+
+Backend
+
+You correctly do:
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+So MongoDB stores something like:
+
+$2b$10$...
+
+It does not store:
+
+mypassword123
+
+That's good.
+
+But then your frontend does:
+
+main2.js
+if (account.password === password) {
+
+That will never work after bcrypt hashing.
+
+You're effectively doing:
+
+"$2b$10$abcdef..." === "mypassword123"
+
+which is false.
+
+6. BACKEND — Create a real /login endpoint
+
+This is what I recommend instead of:
+
+frontend → /allAccounts → download every account → find password
+
+You should do:
+
+frontend
+   ↓
+POST /login
+   ↓
+backend finds account
+   ↓
+bcrypt.compare()
+   ↓
+success/failure
+File: backend index2.js
+
+Add a route somewhere after /addUser.
+
+Something like:
+
+app.post("/login", async (req, res) => {
+	try {
+		const { email, password } = req.body;
+
+
+		if (!email || !password) {
+			return res.status(400).json({
+				error: "Email and password are required",
+			});
+		}
+
+
+		const collection = client
+			.db("allAcounts")
+			.collection("acounts");
+
+
+		const account = await collection.findOne({ email });
+
+
+		if (!account) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		const bcrypt = require("bcrypt");
+
+
+		const passwordCorrect = await bcrypt.compare(
+			password,
+			account.password,
+		);
+
+
+		if (!passwordCorrect) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		res.json({
+7. FRONTEND — Change getDataAccounts()
+File: main2.js
+
+Your current getDataAccounts() does:
+
+fetch("https://easy-animals.onrender.com/allAccounts")
+
+and downloads all users.
+
+Delete that approach.
+
+Instead:
+
+async function getDataAccounts() {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+
+	try {
+		const response = await fetch(
+			"https://easy-animals.onrender.com/login",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify({
+					email,
+					password,
+				}),
+			},
+		);
+
+
+		const data = await response.json();
+
+
+		if (!response.ok) {
+			alert(data.error || "Login failed.");
+			return;
+		}
+
+
+		console.log("Login success");
+
+
+		localStorage.setItem("email", email);
+
+
+
+Now the password stays on the frontend and is sent only to the login endpoint.
+
+8. BACKEND — /allAccounts should NOT be used for login
+File: backend index2.js
+
+You currently have:
+
+app.get("/allAccounts", async (req, res) => {
+
+which does:
+
+const accounts = await collection.find({}).toArray();
+
+
+res.status(200).send(accounts);
+
+That means anyone who knows your API URL can request every account, including password hashes.
+
+Even though bcrypt hashes aren't plain passwords, you should never expose them.
+
+For now, I would either remove /allAccounts entirely or make it return no passwords.
+
+For example, if you genuinely need an admin endpoint later, use a MongoDB projection:
+
+const accounts = await collection
+	.find({})
+	.project({ password: 0 })
+	.toArray();
+
+But for your current application, you don't need /allAccounts at all.
+
+9. BACKEND — accounts.updateOne() is a definite error
+
+This is probably why your checkmark button doesn't work.
+
+File: backend index2.js
+
+Inside:
+
+app.patch("/updateDone", async (req, res) => {
+
+you create:
+
+const collection = client.db("allAcounts").collection("acounts");
+
+But later you use:
+
+const result = await accounts.updateOne(
+
+There is no variable called accounts.
+
+You meant:
+
+const result = await collection.updateOne(
+
+So change:
+
+const result = await accounts.updateOne(
+
+to:
+
+const result = await collection.updateOne(
+10. BACKEND — Clean up /updateDone
+
+Your /updateDone route has a second major issue.
+
+After:
+
+res.json({
+	message: `${completeField} updated`,
+	animalId: animalId,
+	[completeField]: newValue,
+});
+
+you have more code.
+
+Then later you have another:
+
+res.json({
+
+A request cannot send two responses.
+
+You also have:
+
+animalId: animal.id,
+
+but animal doesn't exist in that route.
+
+So I would completely replace your current /updateDone route with this:
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		const collection = client
+			.db("allAcounts")
+			.collection("acounts");
+
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+
+		if (!email) {
+			return res.status(400).json({
+				error: "Email is required",
+			});
+		}
+
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({
+				error: "Invalid animal ID",
+			});
+		}
+
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+
+		const completeField = `complete${animalId}`;
+
+
+		const result = await collection.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+
+That's much cleaner.
+
+11. FRONTEND/BACKEND — complete vs complete1
+
+You have another mismatch.
+
+Backend account creation
+
+Currently:
+
+complete: "no",
+complete2: "no",
+complete3: "no",
+
+But your frontend does:
+
+main.js
+const complete = account[`complete${answer.id}`];
+
+For animal ID 1, that becomes:
+
+account.complete1
+
+But your database has:
+
+account.complete
+
+So:
+
+account.complete1
+
+is undefined.
+
+Fix
+Backend addUser
+
+Change:
+
+complete: "no",
+complete2: "no",
+complete3: "no",
+
+to:
+
+complete1: "no",
+complete2: "no",
+complete3: "no",
+complete4: "no",
+complete5: "no",
+complete6: "no",
+complete7: "no",
+complete8: "no",
+
+Now your frontend:
+
+const complete = account[`complete${answer.id}`];
+
+works correctly.
+
+12. FRONTEND — Make getData() a little safer
+File: main.js
+
+At the very top, add:
+
+const email = localStorage.getItem("email");
+
+
+if (!email) {
+	window.location.href = "index.html";
+}
+
+Then your getData() can remain mostly as you have it.
+
+I'd also change the fetches to check response.ok.
+
+For example:
+
+async function getData() {
+	try {
+		const animalsResponse = await fetch(
+			"https://easy-animals.onrender.com/allAnimals",
+			{
+				credentials: "include",
+			},
+		);
+
+
+		if (!animalsResponse.ok) {
+			throw new Error("Could not get animals");
+		}
+
+
+		const animals = await animalsResponse.json();
+
+
+		const accountResponse = await fetch(
+			`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`,
+			{
+				credentials: "include",
+			},
+		);
+
+
+		if (!accountResponse.ok) {
+			throw new Error("Could not get account");
+		}
+
+
+		const account = await accountResponse.json();
+
+
+		let html = "";
+
+
+		animals.forEach((answer) => {
+			const complete =
+				account[`complete${answer.id}`] || "no";
+
+
+			const checkImage =
+				complete === "yes"
+
+The important fix here is:
+
+document.getElementById("videos").innerHTML = html;
+13. FRONTEND — Your login button setup is okay, but simplify it
+File: main2.js
+
+You have:
+
+const signIn = document.querySelector(".signIn");
+
+but then later:
+
+document.querySelector(".signIn").addEventListener("click", function () {
+	getDataAccounts();
+});
+
+You can simply use the variable you already created:
+
+signIn.addEventListener("click", function () {
+	getDataAccounts();
+});
+
+Not a serious bug, just unnecessary duplication.
+
+14. BACKEND — Your MongoDB connection setup should be changed
+
+This is a more subtle backend issue.
+
+At the top you have:
+
+async function run() {
+	try {
+		await client.connect();
+
+
+		await client.db("admin").command({ ping: 1 });
+
+
+		console.log(
+			"Pinged your deployment. You successfully connected to MongoDB!",
+		);
+	} finally {
+		await client.close();
+	}
+}
+
+
+run().catch(console.dir);
+
+You're connecting and then immediately closing the MongoDB client.
+
+But later your routes do:
+
+await client.connect();
+
+on every request.
+
+That isn't a good structure.
+
+For your project, I'd connect once when the server starts.
+
+For example:
+
+async function run() {
+	try {
+		await client.connect();
+
+
+		await client.db("admin").command({ ping: 1 });
+
+
+		console.log("Connected to MongoDB");
+
+
+		app.listen(port, () => {
+			console.log(`Server running on port ${port}`);
+		});
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+
+run();
+
+And don't do client.close() there.
+
+Then you don't necessarily need:
+
+await client.connect();
+
+inside every route.
+
+For example:
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		const collection = client
+			.db("allAnimals")
+			.collection("animals");
+
+
+		const animals = await collection.find({}).toArray();
+
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.error(error);
+
+
+		res.status(500).json({
+			error: "Could not get all animals",
+		});
+	}
+});
+
+This is a better structure.
+
+15. BACKEND — Your / route has strange/dead code
+
+You have:
+
+app.get("/", async (req, res) => {
+	try {
+		res.redirect("info.html");
+
+
+		const buffer = await fs.readFile("", { encode: "utf8" });
+	} catch (error) {
+
+This:
+
+const buffer = await fs.readFile("", { encode: "utf8" });
+
+doesn't appear to serve a purpose.
+
+You already sent the redirect.
+
+Just do:
+
+app.get("/", (req, res) => {
+	res.redirect("info.html");
+});
+
+Although, if this is a backend-only Render server and your frontend is on GitHub Pages, you may not even need this route.
+
+16. FRONTEND — Your HTML has a misleading filename situation
+
+From what you pasted, I think you have something like:
+
+main.js
+main2.js
+index.html
+index2.html
+index2.js
+
+But index2.js is actually your backend Express server.
+
+That's confusing.
+
+I'd strongly recommend:
+
+frontend/
+    index.html          ← login
+    animals.html        ← animal list
+    main.js             ← animal-page JS
+    login.js            ← login-page JS
+    style.css
+
+
+backend/
+    server.js           ← Express/MongoDB
+
+You don't have to reorganize everything right now, but at minimum I'd rename:
+
+main2.js
+
+to:
+
+login.js
+
+and:
+
+index2.js
+
+to:
+
+server.js
+
+That will make your project much easier to understand.
+
+17. Your current architecture should look like this
+
+Right now some responsibilities are mixed together.
+
+I'd aim for this:
+
+LOGIN PAGE
+index.html
+   │
+   └── login.js
+          │
+          │ POST /login
+          ▼
+       BACKEND
+          │
+          ▼
+       MongoDB
+
+
+
+
+CREATE ACCOUNT
+index.html
+   │
+   └── login.js
+          │
+          │ POST /addUser
+          ▼
+       BACKEND
+          │
+          ▼
+       MongoDB
+
+
+
+
+ANIMAL PAGE
+index2.html
+   │
+   └── main.js
+          │
+          ├── GET /allAnimals
+          │
+          └── GET /complete?email=...
+          │
+          ▼
+18. One more important thing: your account creation popup
+
+Your current flow is:
+
+Sign in
+   ↓
+account doesn't exist
+   ↓
+popup
+   ↓
+Yes
+   ↓
+create account
+
+That's fine.
+
+But your createAccount() currently does:
+
+window.location.href = "index2.html";
+
+after creating the account.
+
+If you use the localStorage approach I mentioned, also add:
+
+localStorage.setItem("email", email);
+
+before redirecting:
+
+localStorage.setItem("email", email);
+window.location.href = "index2.html";
+
+Otherwise the animal page won't know which account to load.
+
+19. What is currently broken vs what is okay
+
+Here's a useful overview.
+
+Feature	Status	Main problem
+Login page appearing	🟡	main.js shouldn't load there
+Create account	🔴	Backend requires first/last name
+Password storage	🟢	bcrypt is good
+Password login	🔴	Comparing bcrypt hash to plain password
+Animal loading	🔴/🟡	Wrong getElementById()
+Getting completion	🟡	complete vs complete1 mismatch
+Checkmark update	🔴	accounts is undefined
+Checkmark image	🟡	Depends on completion fields being correct
+MongoDB	🟡	Connection lifecycle should be cleaned up
+/allAccounts	🔴	Exposes every account/password hash
+/allAnimals	🟢	Generally okay
+/complete	🟢	Generally okay
+/specificAnimal	🟢	Generally okay
+Delete account	🟡	Should validate ObjectId
+CORS	🟡	Fine for GitHub Pages, but local development needs another origin
+email after login	🔴	Not persisted
+20. The order I'd fix everything
+
+Don't try to fix all of it simultaneously. Do it in this order:
+
+Step 1 — Frontend
+
+Login HTML
+
+Remove:
+
+<script src="main.js" defer></script>
+
+Keep:
+
+<script src="main2.js" defer></script>
+Step 2 — Backend
+
+index2.js, /addUser
+
+Change the required fields so they match what the frontend actually sends.
+
+Use:
+
+if (!email || !password) {
+	return res.status(400).send("Email and password are required");
+}
+
+and create:
+
+complete1: "no",
+complete2: "no",
+...
+complete8: "no",
+Step 3 — Backend
+
+index2.js, add /login
+
+Use bcrypt.compare().
+
+Step 4 — Frontend
+
+main2.js, getDataAccounts()
+
+Stop calling:
+
+/allAccounts
+
+and call:
+
+POST /login
+
+instead.
+
+Step 5 — Frontend
+
+main2.js, successful login
+
+Add:
+
+localStorage.setItem("email", email);
+
+before:
+
+window.location.href = "index2.html";
+Step 6 — Frontend
+
+main.js, very top
+
+Add:
+
+const email = localStorage.getItem("email");
+
+
+if (!email) {
+	window.location.href = "index.html";
+}
+Step 7 — Frontend
+
+main.js, bottom of getData()
+
+Change:
+
+document.getElementById("DOMContentLoaded", "videos").innerHTML = html;
+
+to:
+
+document.getElementById("videos").innerHTML = html;
+Step 8 — Backend
+
+index2.js, /updateDone
+
+Change:
+
+accounts.updateOne
+
+to:
+
+collection.updateOne
+
+and remove the duplicate code after the first res.json().
+
+Step 9 — Backend
+
+index2.js, MongoDB connection
+
+Change your connection setup so MongoDB is connected once when the server starts rather than connecting/closing it repeatedly.
+
+Step 10 — Security cleanup
+
+Remove or stop using:
+
+GET /allAccounts
+
+for authentication.
+
+Never have the browser download the complete list of users.
+
+One especially important thing
+
+If you make only three changes first, make these:
+
+Frontend — login HTML
+<script src="main2.js" defer></script>
+
+not both JS files.
+
+Backend — /updateDone
+const result = await collection.updateOne(
+
+instead of:
+
+const result = await accounts.updateOne(
+Frontend — main.js
+document.getElementById("videos").innerHTML = html;
+
+instead of:
+
+document.getElementById("DOMContentLoaded", "videos").innerHTML = html;
+
+Those are three concrete bugs that can immediately explain things not working.
+
+The next biggest issue is authentication: your frontend currently downloads all accounts and compares a plain password against a bcrypt hash. That should be replaced with the /login endpoint above. Once that is fixed, the login → account → animal completion flow will be much more coherent.
+
+Yes — and we can keep this much smaller now. You do not need to reorganize your project or rename files. Given that you're short on time, I'd focus only on the things that are actually preventing functionality.
+
+First: your questions
+Step 6 — localStorage in main.js
+
+Yes, this is necessary with your current setup.
+
+You already do this in main2.js after login:
+
+localStorage.setItem("email", email);
+
+So the animal page needs to retrieve it somehow. Your current main.js already does that inside getData() and updateComplete():
+
+const email = localStorage.getItem("email");
+
+So you've already done step 6. You don't need to change anything. 👍
+
+Step 7 — getElementById("videos")
+
+Yes, this one is necessary.
+
+You currently have:
+
+document.getElementById("videos").innerHTML = html;
+
+in the code you just sent.
+
+So you've already fixed it. No further change needed. 👍
+
+Step 17 — / route
+
+You asked if this is necessary.
+
+No.
+
+If:
+
+app.get("/", async (req, res) => {
+	res.redirect("info.html");
+});
+
+works for you, leave it alone.
+
+There's no reason to spend time changing it right now.
+
+Step 16 — renaming files
+
+Also completely unnecessary.
+
+Keep:
+
+main2.js
+main.js
+index2.js
+index2.html
+
+if that's what you have. Don't touch it.
+
+Step 14 — MongoDB connection
+
+This one is a little different.
+
+You currently have:
+
+async function run() {
+	try {
+		await client.connect();
+		await client.db("admin").command({ ping: 1 });
+		console.log(
+			"Pinged your deployment. You successfully connected to MongoDB!",
+		);
+	} catch (error) {
+		console.error(error);
+	}
+}
+run().catch(console.dir);
+
+and then individual routes sometimes do:
+
+await client.connect();
+
+Is that ideal? No.
+
+Is it the thing you need to fix right now? No.
+
+If it is currently working, leave it alone for your deadline.
+
+One important thing, though: don't start changing this while simultaneously fixing login. That's just going to create more variables.
+
+Now let's focus on the password issue
+
+This is the part you do need to fix.
+
+Your current situation is:
+
+Creating an account
+
+Frontend:
+
+password
+   ↓
+POST /addUser
+   ↓
+bcrypt.hash(password)
+   ↓
+MongoDB stores hashed password
+
+That's good.
+
+But logging in currently does:
+
+frontend
+   ↓
+GET /account
+   ↓
+MongoDB gives hashed password
+   ↓
+frontend compares:
+
+
+hashed password === typed password
+
+That can never work.
+
+For example:
+
+Database:
+$2b$10$abc123...
+
+
+User types:
+hello123
+
+Your code is effectively asking:
+
+"$2b$10$abc123..." === "hello123"
+
+which is false.
+
+One important thing before we change it
+
+You currently have this backend endpoint:
+
+app.get("/account", async (req, res) => {
+
+It expects:
+
+req.query.email
+
+But your frontend currently calls:
+
+fetch("https://easy-animals.onrender.com/account", {
+	credentials: "include",
+});
+
+You aren't even sending the email.
+
+So there's actually another problem there.
+
+And there's another issue:
+
+const data = await response.json();
+
+
+const account = data.find(function (account) {
+
+But /account returns one account object, not an array.
+
+Your backend does:
+
+const account = await collection.findOne(...)
+
+and then:
+
+res.status(200).send(account);
+
+So data.find(...) is wrong too.
+
+This means I'd not try to patch the current login function. It's cleaner to make one small login endpoint.
+
+The solution I recommend
+
+We only need to change two files:
+
+Backend: index2.js
+Frontend: main2.js
+
+You don't need to touch main.js.
+
+You don't need to touch index2.html.
+
+You don't need to reorganize anything.
+
+BACKEND — add /login
+File: index2.js
+
+Put this directly after your /addUser route.
+
+So find:
+
+app.post("/addUser", async (req, res) => {
+
+and its closing:
+
+});
+
+Then put this immediately underneath:
+
+app.post("/login", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+
+
+		const { email, password } = req.body;
+
+
+		if (!email || !password) {
+			return res.status(400).json({
+				error: "Email and password are required",
+			});
+		}
+
+
+		const collection = client
+			.db("allAcounts")
+			.collection("acounts");
+
+
+		const account = await collection.findOne({ email });
+
+
+		if (!account) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		const passwordCorrect = await bcrypt.compare(
+			password,
+			account.password,
+		);
+
+
+		if (!passwordCorrect) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		res.status(200).json({
+			message: "Login successful",
+			email: account.email,
+		});
+	} catch (error) {
+		console.error(error);
+
+
+		res.status(500).json({
+			error: "Could not log in",
+		});
+	}
+});
+What this does
+
+Suppose the user enters:
+
+email: test@test.com
+password: hello123
+
+Frontend sends:
+
+{
+	"email": "test@test.com",
+	"password": "hello123"
+}
+
+Backend finds:
+
+account.password
+
+which contains the bcrypt hash.
+
+Then:
+
+bcrypt.compare(password, account.password)
+
+checks whether hello123 matches the hash.
+
+You do not decrypt the password. Bcrypt isn't decrypted. compare() checks the password against the hash.
+
+FRONTEND — replace getDataAccounts()
+File: main2.js
+
+You can completely replace your current:
+
+async function getDataAccounts() {
+
+through its closing }.
+
+Your current function is roughly around the middle of the file.
+
+Replace it with:
+
+async function getDataAccounts() {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+
+	try {
+		const response = await fetch(
+			"https://easy-animals.onrender.com/login",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify({
+					email: email,
+					password: password,
+				}),
+			},
+		);
+
+
+		const data = await response.json();
+
+
+		if (!response.ok) {
+			alert(data.error || "Login failed.");
+			return;
+		}
+
+
+		console.log("Login success");
+
+
+		localStorage.setItem("email", email);
+
+
+		window.location.href = "index2.html";
+	} catch (error) {
+		console.log(error);
+		alert("Could not connect to the server.");
+	}
+}
+What you can now delete from the old login function
+
+You don't need any of this anymore:
+
+const data = await response.json();
+
+
+const account = data.find(function (account) {
+	return account.email === email;
+});
+
+
+if (account) {
+	if (account.password === password) {
+
+That's the old, insecure login approach.
+
+Your frontend should never receive the password hash just to decide whether the password is correct.
+
+Your account creation is already mostly correct
+
+You changed your backend to:
+
+const { email, password } = req.body;
+
+and:
+
+if (!email || !password)
+
+Good.
+
+And you're doing:
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+Also good.
+
+And:
+
+complete1: "no",
+complete2: "no",
+...
+
+Good.
+
+So don't change your account creation right now.
+
+One small issue with your createAccount()
+
+You have:
+
+const newAccount = await response.json();
+
+but your backend sends:
+
+return res.status(201).send("upload succesful");
+
+That's plain text, not JSON.
+
+So this:
+
+await response.json()
+
+can throw an error.
+
+You might see something like:
+
+Unexpected token 'u', "upload succesful" is not valid JSON
+
+This is a small but real bug.
+
+Easiest fix
+FRONTEND — main2.js
+
+Change:
+
+const newAccount = await response.json();
+
+
+console.log("Account created:", newAccount);
+
+to:
+
+const newAccount = await response.text();
+
+
+console.log("Account created:", newAccount);
+
+That's all.
+
+Alternatively you could change the backend to return JSON, but since you're trying not to change too much, I'd just change the frontend line.
+
+Your current flow after these changes
+
+You'll have:
+
+                 FRONTEND
+                    │
+                    │
+             user enters email
+             user enters password
+                    │
+                    ▼
+             main2.js
+                    │
+                    │ POST /login
+                    ▼
+                 BACKEND
+                    │
+                    │ findOne({ email })
+                    ▼
+                 MongoDB
+                    │
+                    │ hashed password
+                    ▼
+                 BACKEND
+                    │
+                    │ bcrypt.compare()
+                    ▼
+             correct / incorrect
+                    │
+             ┌──────┴──────┐
+             │             │
+          correct        incorrect
+             │             │
+             ▼             ▼
+       localStorage      alert()
+       set email
+             │
+             ▼
+        index2.html
+             │
+             ▼
+          main.js
+             │
+             ▼
+       getData()
+
+That's the flow you want.
+
+One more thing: your main.js currently has a small mistake
+
+You wrote:
+
+const animals = await fetch(
+	"https://easy-animals.onrender.com/allAnimals",
+	{ credentials: "include" },
+).then((res) => res.json());
+
+
+if (!animals.ok) {
+	throw new Error("Could not get animals");
+}
+
+
+const animalAll = await animals.json();
+
+There are two problems here.
+
+After:
+
+.then((res) => res.json())
+
+animals is already the parsed JSON.
+
+So you cannot do:
+
+animals.ok
+
+and you cannot do:
+
+animals.json()
+
+after that.
+
+And then later you use:
+
+animals.forEach(...)
+
+which confirms that animals is already the array.
+
+Change this part
+FRONTEND — main.js, inside getData()
+
+Replace:
+
+const animals = await fetch(
+	"https://easy-animals.onrender.com/allAnimals",
+	{ credentials: "include" },
+).then((res) => res.json());
+
+
+if (!animals.ok) {
+	throw new Error("Could not get animals");
+}
+
+
+const animalAll = await animals.json();
+
+with:
+
+const animalsResponse = await fetch(
+	"https://easy-animals.onrender.com/allAnimals",
+	{
+		credentials: "include",
+	},
+);
+
+
+if (!animalsResponse.ok) {
+	throw new Error("Could not get animals");
+}
+
+
+const animals = await animalsResponse.json();
+
+Then your:
+
+animals.forEach((answer) => {
+
+is correct.
+
+Your account part is already closer to correct
+
+You have:
+
+const account = await fetch(
+	`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`,
+	{ credentials: "include" },
+);
+
+Then:
+
+if (!account.ok) {
+	throw new Error("Could not get account");
+}
+
+
+const accountComplete = await account.json();
+
+That's good.
+
+But then you accidentally use account instead of accountComplete:
+
+You currently have:
+
+const complete = account[`complete${answer.id}`] || "no";
+
+That should be:
+
+const complete = accountComplete[`complete${answer.id}`] || "no";
+
+This is important.
+
+So that entire section should be:
+
+const account = await fetch(
+	`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`,
+	{ credentials: "include" },
+);
+
+
+if (!account.ok) {
+	throw new Error("Could not get account");
+}
+
+
+const accountComplete = await account.json();
+
+
+let html = "";
+
+
+animals.forEach((answer) => {
+	const complete =
+		accountComplete[`complete${answer.id}`] || "no";
+
+
+	// ...
+});
+So, your priority list now
+
+Since you don't have much time, I'd do exactly these things:
+
+🔴 1. BACKEND — index2.js
+
+Add the /login endpoint.
+
+🔴 2. FRONTEND — main2.js
+
+Replace getDataAccounts() with the new login version.
+
+🟠 3. FRONTEND — main2.js
+
+Change:
+
+await response.json()
+
+to:
+
+await response.text()
+
+inside createAccount().
+
+🔴 4. FRONTEND — main.js
+
+Fix the animals fetch:
+
+const animalsResponse = await fetch(...)
+
+and then:
+
+const animals = await animalsResponse.json();
+🔴 5. FRONTEND — main.js
+
+Change:
+
+account[`complete${answer.id}`]
+
+to:
+
+accountComplete[`complete${answer.id}`]
+🟢 Leave alone
+
+You do not need to change:
+
+your / route
+your file names
+your MongoDB connection setup
+index2.html
+index.html
+your localStorage setup
+your /complete route
+your /allAnimals route
+
+for now.
+
+And here's the quick "what is broken" map I'd use while debugging
+Feature	File	Status
+Create account	Frontend main2.js	🟢 Mostly fixed
+Create account	Backend index2.js	🟢 Mostly fixed
+Password hashing	Backend index2.js	🟢 Good
+Login	Frontend main2.js	🔴 Needs /login
+Login/password checking	Backend index2.js	🔴 Add /login
+Remember email	Frontend main2.js	🟢 Good
+Load animals	Frontend main.js	🟠 Fix fetch handling
+Load completion	Frontend main.js	🔴 account → accountComplete
+Checkmark update	Backend index2.js	🟢 collection.updateOne fixed
+Checkmark update	Frontend main.js	🟢 Looks okay
+complete1 etc.	Backend index2.js	🟢 Fixed
+MongoDB connection	Backend index2.js	🟡 Not ideal, but leave it
+File organization	Everything	🟢 Leave it
+
+If you make the five changes above, don't make any of the other changes I previously suggested yet. This keeps the amount of work manageable and gets the login/password → animal page flow into a much more sensible state.
+
+when i questioned 6 and 7 i actually meant the part about deleting addUser and completely adding new login code. does this really need to happen? it feels unnecessary. id rather add to the already existing code of addUser
+
+17 was about the architecture. is it a problem if some things overlap? because, as far as im concerned, if it works, it ok
+
+Yes — in that case, I agree with you. You do not need to delete addUser and completely rewrite your login system, and you don't need to reorganize your whole architecture just because some responsibilities overlap.
+
+About addUser
+
+Keep your existing backend route:
+
+app.post("/addUser", async (req, res) => {
+
+You already have the important part: you're hashing the password with bcrypt before putting it in MongoDB.
+
+The thing you need to add is a login route, rather than trying to use /account to do login.
+
+So your backend can have both:
+
+POST /addUser       → create an account
+GET  /account       → retrieve an account
+POST /login         → check login credentials
+
+That's a small addition, not a rewrite.
+
+The biggest problem with your current password system
+
+Your backend does this when creating an account:
+
+Backend — index2.js, inside /addUser
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+
+await collection.insertOne({
+	email,
+	password: hashedPassword,
+	complete1: "no",
+	...
+});
+
+So MongoDB contains something like:
+
+email: "test@gmail.com"
+password: "$2b$10$......."
+
+But your frontend currently does this:
+
+Frontend — main2.js, inside getDataAccounts()
+
+if (account.password === password) {
+
+That will never work correctly, because:
+
+account.password = "$2b$10$......."  ← hashed password
+password        = "mypassword"        ← plain password
+
+Those aren't supposed to be equal.
+
+And you should not change this back to storing plain-text passwords.
+
+Minimal fix: add /login
+
+This is what I'd recommend given that you don't want to change lots of things.
+
+1. Backend — index2.js
+
+Put this directly after your existing /addUser route.
+
+So roughly around the area where you currently have:
+
+app.post("/addUser", async (req, res) => {
+    ...
+});
+
+Add:
+
+app.post("/login", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+
+
+		const { email, password } = req.body;
+
+
+		if (!email || !password) {
+			return res.status(400).json({
+				error: "Email and password are required",
+			});
+		}
+
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+
+		const account = await collection.findOne({ email });
+
+
+		if (!account) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		const passwordCorrect = await bcrypt.compare(
+			password,
+			account.password,
+		);
+
+
+		if (!passwordCorrect) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+
+		res.status(200).json({
+			message: "Login successful",
+			email: account.email,
+		});
+	} catch (error) {
+		console.error(error);
+
+
+		res.status(500).json({
+			error: "Could not log in",
+		});
+	}
+});
+What this does
+
+The frontend sends:
+
+email = test@gmail.com
+password = mypassword
+
+The backend finds the account and does:
+
+bcrypt.compare(password, account.password)
+
+Bcrypt then checks whether:
+
+"mypassword"
+
+matches:
+
+"$2b$10$......."
+
+without you ever needing to decrypt the password.
+
+2. Frontend — main2.js
+
+Now you can remove/replace only the inside of getDataAccounts().
+
+You don't have to change your buttons, popup, createAccount(), etc.
+
+Your current function starts around:
+
+async function getDataAccounts() {
+
+Replace that function with:
+
+async function getDataAccounts() {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+
+	try {
+		const response = await fetch(
+			"https://easy-animals.onrender.com/login",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify({
+					email: email,
+					password: password,
+				}),
+			},
+		);
+
+
+		const data = await response.json();
+
+
+		if (!response.ok) {
+			alert(data.error || "Login failed.");
+			return;
+		}
+
+
+		console.log("Login success");
+
+
+		localStorage.setItem("email", email);
+
+
+		window.location.href = "index2.html";
+	} catch (error) {
+		console.log(error);
+		alert("Could not connect to the server.");
+	}
+}
+
+That's it for the password problem.
+
+One other thing: your createAccount() currently has a problem
+
+You said you'd rather add to your existing addUser, and that's completely fine.
+
+However, look at your frontend createAccount():
+
+Frontend — main2.js, createAccount()
+
+You're sending:
+
+body: JSON.stringify({
+	email: email,
+	password: password,
+}),
+
+That's now compatible with your current backend because you already changed this:
+
+const { /*firstName, lastName,*/ email, password } = req.body;
+
+So leave that as it is.
+
+Your existing:
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+is good.
+
+Don't remove it.
+
+About your architecture question
+
+is it a problem if some things overlap? because, as far as im concerned, if it works, it ok
+
+For this project, I basically agree with you.
+
+There's a difference between:
+
+"This could theoretically be structured more cleanly"
+
+and
+
+"This is actually causing a bug."
+
+You don't need to spend hours restructuring working code just because someone could design it differently.
+
+For example, you currently have things like:
+
+app.use(bodyParser.json());
+
+and later:
+
+app.use(express.json());
+
+That's redundant.
+
+But if your application works, I wouldn't make that a priority right now.
+
+Likewise, your frontend/backend architecture isn't perfect, but you can absolutely finish the project without rebuilding everything.
+
+I'd prioritize actual bugs:
+
+Fix now
+🔴 Password login — this is genuinely broken because of bcrypt.
+🔴 getData() has a small mistake I'll explain below.
+🔴 Make sure your backend responds properly to failed requests.
+Don't worry about right now
+reorganizing every route
+completely redesigning your frontend
+removing addUser
+changing your entire authentication architecture
+removing every bit of duplicate code
+making everything "perfect"
+There is another bug in getData()
+
+This is important.
+
+Frontend — main.js, inside getData()
+
+You currently have:
+
+const animals = await fetch(
+	"https://easy-animals.onrender.com/allAnimals",
+	{ credentials: "include" },
+).then((res) => res.json());
+
+
+if (!animals.ok) {
+	throw new Error("Could not get animals");
+}
+
+
+const animalAll = await animals.json();
+
+There are two problems here.
+
+After:
+
+const animals = await fetch(...).then((res) => res.json());
+
+animals is already the JSON data.
+
+For example:
+
+[
+	{ id: 1, animal: "Chicken" },
+	{ id: 2, animal: "Dog" }
+]
+
+It's not a Response anymore.
+
+Therefore:
+
+animals.ok
+
+doesn't make sense.
+
+And:
+
+await animals.json()
+
+will also fail because animals isn't a Response.
+
+Change that part to:
+const response = await fetch(
+	"https://easy-animals.onrender.com/allAnimals",
+	{ credentials: "include" },
+);
+
+
+if (!response.ok) {
+	throw new Error("Could not get animals");
+}
+
+
+const animals = await response.json();
+
+That's much better.
+
+You have the same conceptual issue with account
+
+You currently have:
+
+const account = await fetch(
+	`https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`,
+	{ credentials: "include" },
+);
+
+This one is actually good because you're keeping the Response.
+
+Then:
+
+if (!account.ok) {
+	throw new Error("Could not get account");
+}
+
+
+const accountComplete = await account.json();
+
+Also good.
+
+But later you do:
+
+const complete = account[`complete${answer.id}`] || "no";
+
+That's the wrong variable.
+
+You want:
+
+const complete =
+	accountComplete[`complete${answer.id}`] || "no";
+
+So change:
+
+const complete = account[`complete${answer.id}`] || "no";
+
+to:
+
+const complete =
+	accountComplete[`complete${answer.id}`] || "no";
+
+This is likely one of the reasons your checkmarks aren't behaving correctly.
+
+Your updateComplete() is now mostly fine
+
+Your frontend:
+
+const email = localStorage.getItem("email");
+
+then:
+
+fetch(
+	`https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+		email,
+	)}&animalId=${animalId}&complete=${newValue}`,
+	{
+		method: "PATCH",
+		credentials: "include",
+	},
+)
+
+and your backend:
+
+const completeField = `complete${animalId}`;
+
+
+const result = await collection.updateOne(
+	{ email: email },
+	{
+		$set: {
+			[completeField]: newValue,
+		},
+	},
+);
+
+These match each other.
+
+So I wouldn't rewrite this.
+
+One small improvement to updateComplete()
+
+You currently do:
+
+if (!email) {
+	window.location.href = "index.html";
+}
+
+I'd add return:
+
+if (!email) {
+	window.location.href = "index.html";
+	return;
+}
+
+Otherwise the function can technically continue executing after redirecting.
+
+So your project can stay like this
+
+You don't need a big rewrite.
+
+Frontend — main2.js
+
+Keep:
+
+newAccountButton
+yesButton
+createAccount()
+localStorage
+
+Change only:
+
+getDataAccounts()
+
+so it calls:
+
+POST /login
+
+instead of downloading account information and comparing passwords itself.
+
+Backend — index2.js
+
+Keep:
+
+POST /addUser
+
+exactly as your account-creation route.
+
+Keep:
+
+bcrypt.hash(password, 10)
+
+Add:
+
+POST /login
+
+which uses:
+
+bcrypt.compare()
+Frontend — main.js
+
+Fix the two getData() mistakes:
+
+const response = await fetch(...);
+if (!response.ok) ...
+const animals = await response.json();
+
+and:
+
+const complete =
+	accountComplete[`complete${answer.id}`] || "no";
+And one important security point
+
+Your old approach of getting /allAccounts and comparing passwords in the browser should not be used, even if you could make it work.
+
+You would effectively be sending all users' password hashes to the frontend.
+
+Your new setup is much better:
+
+                 FRONTEND
+                     │
+                     │ email + password
+                     ▼
+              POST /login
+                     │
+                     ▼
+                 BACKEND
+                     │
+              find account
+                     │
+              bcrypt.compare()
+                     │
+              ┌──────┴──────┐
+              │             │
+           correct        wrong
+              │             │
+           success         401
+
+And your account creation remains:
+
+FRONTEND
+   │
+   │ email + password
+   ▼
+POST /addUser
+   │
+   ▼
+BACKEND
+   │
+bcrypt.hash()
+   │
+   ▼
+MongoDB
+
+So you're adding one route and changing one frontend function, rather than rebuilding your project. That's the approach I'd take given your time constraints.
+
+//TODO: fetch backend
+/*async function getBackend() {
+	const url = "https://easy-animals.onrender.com";
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(Response status: ${response.status});
+		}
+		const result = await response.json();
+		console.log(result);
+	} catch (error) {
+		console.error(error.message);
+	}
+}*/
+
+//const { send } = require("vite");
+
+console.log("main.js exists");
+
+function init() {
+	getData();
+}
+
+function updateComplete(animalId, currentValue) {
+	const newValue = currentValue === "yes" ? "no" : "yes";
+
+	const emailInput = document.getElementById("email");
+
+	const email = localStorage.getItem("email");
+
+	if (!email) {
+		window.location.href = "index2.html";
+		return;
+	}
+
+	fetch(
+		https://easy-animals.onrender.com/updateDone?email=${encodeURIComponent(
+			email,
+		)}&animalId=${animalId}&complete=${newValue},
+		{
+			method: "PATCH",
+			credentials: "include",
+		},
+	)
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+
+			// Reload the animals so the correct image is displayed
+			getData();
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+}
+
+/*async function getData() {
+	console.log("hello from getData");
+
+	const animals = await fetch("https://easy-animals.onrender.com/allAnimals", {
+		credentials: "include",
+	})
+		.then(function (response) {
+			console.log("hello from response");
+			return response.json();
+		})
+		.then(function (animals) {
+			console.log(animals);
+			let html = "";
+			animals.forEach((answer) => {
+				console.log(answer);
+
+				console.log(answer.animal);
+
+				/*const checkImage =
+					answer.complete === "yes"
+						? "assets/checkmark.png"
+						: "assets/Cross.png";
+*/
+//${answer.video}
+/*
+				html += <div class="video">
+					<a class="thumbnail" href=""
+						><img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+					/></a>
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" alt="" class="star1 star" />
+								<img src="assets/emptyStar.png" alt="" class="star2 star" />
+								<img src="assets/emptyStar.png" alt="" class="star3 star" />
+								<img src="assets/emptyStar.png" alt="" class="star4 star" />
+								<img src="assets/emptyStar.png" alt="" class="star5 star" />
+							</div>
+						</div>
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${answer.complete}')">
+									<img src="${checkImage}" alt="Complete" />
+								</button>
+						</div>
+					</div>
+				</div>;
+			});
+			document.getElementById("videos").innerHTML = html;
+
+			// Add click events to all the generated buttons
+			/*document.querySelectorAll(".checkButton").forEach((button) => {
+				button.addEventListener("click", function () {
+					const animalId = this.dataset.animalId;
+					const currentValue = this.dataset.complete;
+
+					const newValue = currentValue === "yes" ? "no" : "yes";
+
+					console.log("Animal:", animalId);
+					console.log("Changing:", currentValue, "→", newValue);
+
+					updateComplete(animalId, newValue);
+				});
+			});*/
+//});
+//}*/
+
+async function getData() {
+	const email = localStorage.getItem("email");
+
+	if (!email) {
+		window.location.href = "index.html";
+	}
+	try {
+		const response = await fetch(
+			"https://easy-animals.onrender.com/allAnimals",
+			{ credentials: "include" },
+		); //.then((res) => res.json());
+
+		if (!response.ok) {
+			throw new Error("Could not get animals");
+		}
+
+		const animals = await response.json();
+
+		const account = await fetch(
+			https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)},
+			{ credentials: "include" },
+		); //.then((res) => res.json());
+
+		if (!account.ok) {
+			throw new Error("Could not get account");
+		}
+
+		const accountComplete = await account.json();
+
+		let html = "";
+
+		animals.forEach((answer) => {
+			const complete = accountComplete[complete${answer.id}] || "no";
+
+			const checkImage =
+				complete === "yes" ? "assets/checkmark.png" : "assets/Cross.png";
+
+			html += 
+				<div class="video">
+					<a class="thumbnail" href="">
+						<img
+							class="thumbnailImage"
+							src="assets/chicken.png"
+							alt="Thumbnail"
+						/>
+					</a>
+
+					<div class="description">
+						<div class="words">
+							<a class="title">${answer.animal}</a>
+
+							<div class="difficulty">
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+								<img src="assets/emptyStar.png" class="star" />
+							</div>
+						</div>
+
+						<div class="finishedCheck">
+							<button onclick="updateComplete(${answer.id}, '${complete}')">
+								<img src="${checkImage}" alt="Complete" />
+							</button>
+						</div>
+					</div>
+				</div>
+			;
+		});
+
+		document.getElementById("videos").innerHTML = html;
+	} catch (error) {
+		//console.error(error);
+		console.log(error);
+	}
+}
+
+init();
+
+
+main.js
+
+//TODO: login
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+const newAccountButton = document.querySelector(".newAccount");
+const yesButton = document.querySelector(".yesButton");
+const signIn = document.querySelector(".signIn");
+
+const popup = document.getElementById("popup");
+
+/*signIn.addEventListener("click", function () {
+	getDataAccounts();
+});
+
+console.log("hello, sign in work?");*/
+
+document.querySelector(".signIn").addEventListener("click", function () {
+	getDataAccounts();
+});
+
+console.log("hello, something should work");
+
+newAccountButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	if (!email || !password) {
+		alert("Please enter an email and password.");
+		return;
+	}
+
+	// Show popup
+	popup.classList.add("show");
+});
+
+// Press "Yes"
+yesButton.addEventListener("click", function () {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	createAccount(email, password);
+});
+
+async function getDataAccounts() {
+	//const email = document.getElementById("email").value;
+	//const password = document.getElementById("password").value;
+
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+	if (!email || !password) {
+		alert("Please enter an email and password");
+		return;
+	}
+
+	try {
+		const response = await fetch("https://easy-animals.onrender.com/account", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+
+			credentials: "include",
+			body: JSON.stringify({ email: email, password: password }),
+		});
+
+		const data = await response.json();
+
+		if (!response.ok) {
+			alert(data.error || "Login failed");
+			throw new Error("Could not get account");
+		}
+		//const accounts = await response.json();
+		//const data = await response.json();
+
+		// Look for an account with this email
+		/*const account = data.find(function (account) {
+			return account.email === email;
+		});*/
+
+		localStorage.setItem("email", email);
+		window.location.href = "index2.html";
+
+		/*if (account) {
+			// Email already exists
+			if (account.password === password) {
+				console.log("Login success");
+				localStorage.setItem("email", email);
+				window.location.href = "index2.html";
+			} else {
+				console.log("Wrong password");
+				alert("Incorrect password.");
+			}
+		} else {
+			// Email doesn't exist, so create a new account
+			//createAccount(email, password);
+			popup.classList.add("show");
+		}*/
+
+		/*then(function (accounts) {
+			console.log(accounts);
+
+			const data = accounts.data;
+
+			const account = data.find(function (account) {
+				return account.email === email && account.password === password;
+			});
+			if (account) {
+				console.log("login succes");
+				window.location.href = "index2.html";
+			} else {
+				createAccount();
+			}
+		});*/
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+async function createAccount(email, password /*, firstName, lastName*/) {
+	try {
+		const response = await fetch("https://easy-animals.onrender.com/addUser", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({
+				email: email,
+				password: password,
+				//firstName: firstName,
+				//lastName: lastName,
+			}),
+		});
+		if (!response.ok) {
+			throw new Error("Could not create account");
+		}
+		//.then(
+		/*function (newAccount) {
+			console.log(newAccount);
+		}.then(function (upload) {
+			upload.email;
+			let popup = document.getElementsByClassName("popup");
+			popup.classList.toggle("show");
+		}),
+		send.addEventListener(""),*/
+		const newAccount = await response.text();
+
+		console.log("Account created:", newAccount);
+
+		// Hide popup
+		popup.classList.remove("show");
+
+		// Account was successfully created
+		localStorage.setItem("email", email);
+		window.location.href = "index2.html";
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+/*document.getElementsById("loginPage").addEventlistener("submit", (event) => {
+	event.preventDefault();
+
+	getDataAccounts();
+
+	let account = {};
+	account.firstName = document.getElementById("firstName").value;
+	account.lastName = document.getElementById("lastName").value;
+	account.email = document.getElementById("email").value;
+	account.password = document.getElementById("password").value;
+
+	/*getData("https://easy-animals.onrender.com/allAcounts", "POST", user).then(
+			(data) => {
+				console.log(data);
+			},
+		);*/
+//});
+
+//TODO: difficulty
+
+//TODO: done/ not done
+
+
+main2.js
+
+//RUN SERVER, VERY IMPORTANT
+const { log, error } = require("console");
+const express = require("express");
+const fs = require("fs/promises");
+const app = express();
+require("dotenv").config();
+const port = process.env.PORT || 10000;
+const bodyParser = require("body-parser");
+
+const cors = require("cors");
+
+app.use(
+	cors({
+		origin: "https://ehb-mct.github.io", ///web2-course-project-front-end-liseHuybrecht-1
+		credentials: true,
+	}),
+);
+
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { all } = require("axios");
+
+const password = process.env.MONGODB_PASSWORD;
+
+const URI = process.env.MONGODB_URI;
+
+const uri = mongodb+srv://lihuybrecht_db_user:${password}@cluster0.rnhnurl.mongodb.net/?appName=Cluster0;
+
+//console.log(process.env.MONGODB_URI);
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+	serverApi: {
+		version: ServerApiVersion.v1,
+		strict: true,
+		deprecationErrors: true,
+	},
+});
+
+//app.use(express.static("publicFolder"));
+async function run() {
+	try {
+		//const allUsers = x;
+		// Connect the client to the server	(optional starting in v4.7)
+		await client.connect();
+		// Send a ping to confirm a successful connection
+		await client.db("admin").command({ ping: 1 });
+		console.log(
+			"Pinged your deployment. You successfully connected to MongoDB!",
+		);
+	} catch (error) {
+		//finally {
+		// Ensures that the client will close when you finish/error
+		//await client.close();
+		//}
+		console.error(error);
+	}
+}
+run().catch(console.dir);
+
+app.use(bodyParser.json());
+
+/*app.get("/", (req, res) => {
+	res.send("Backend is running!");
+});*/
+
+app.listen(port, () => {
+	console.log(app listening on port https://easy-animals.onrender.com);
+	console.log(port);
+	console.log(GET /acounts - Get all acounts);
+	//console.log( MONGO_URI: ${process.env.MONGODB_URI});
+	//console.log(process.env.YOUR_VARIABLE_NAME);
+});
+
+app.get("/", async (req, res) => {
+	//try {
+	res.redirect("info.html");
+
+	//const buffer = await fs.readFile("", { encode: "utf8" });
+	//} catch (error) {
+	//res.status(500).send("Server error, try again later");
+	//}
+});
+
+app.get("/account", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}
+});
+
+app.get("/allAccounts", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		const accounts = await collection.find({}).toArray();
+
+		res.status(200).send(accounts);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all accounts", value: error });
+	}
+});
+
+app.use(express.json());
+app.post("/addUser", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+		const { /*firstName, lastName,*/ email, password } = req.body;
+		console.log(req.body);
+
+		if (/*!firstName || !lastName || */ !email || !password) {
+			//return res.status(400);
+			//.json({ error: "firstname, lastname, email and password required" });
+			return res.status(400).send("missing info");
+		}
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const existingUsers = await collection.findOne({ email });
+
+		console.log("hello1");
+
+		if (existingUsers) {
+			return res.status(409).json({ error: "Email already exists" });
+		}
+		/*if (!existingUsers) {
+			return res.status(401).json({ error: "Incorrect email or password" });
+		}*/
+
+		//import bcrypt from "bcrypt";
+		console.log("hello2");
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
+			//firstName,
+			//lastName,
+			email,
+			password: hashedPassword,
+			complete1: "no",
+			complete2: "no",
+			complete3: "no",
+			complete4: "no",
+			complete5: "no",
+			complete6: "no",
+			complete7: "no",
+			complete8: "no",
+		});
+
+		console.log("hello3");
+
+		return res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.post("/login", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res.status(400).json({
+				error: "Email and password are required",
+			});
+		}
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email });
+
+		if (!account) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+		const passwordCorrect = await bcrypt.compare(password, account.password);
+
+		if (!passwordCorrect) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+		res.status(200).json({
+			message: "Login successful",
+			email: account.email,
+		});
+	} catch (error) {
+		console.error(error);
+
+		res.status(500).json({
+			error: "Could not log in",
+		});
+	}
+});
+
+/*app.put("/updateAccount", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		const bcrypt = require("bcrypt");
+		const { firstName, lastName, email, password } = req.body;
+		console.log(req.body);
+
+		const hashedPassword = await bcrypt.hash(password, 10);
+
+		await collection.insertOne({
+			firstName,
+			lastName,
+			email,
+			password: hashedPassword,
+		});
+
+		return res.status(201).send("upload succesful");
+		//res.status(201).json(userWithoutPassword);
+	} catch (error) {
+		console.error(error);
+
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+		//res.status(500).send({ error: "Could not update account", value: error });
+	}
+});*/
+
+app.use(express.json());
+
+app.patch("/updateAccountFirstName", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		//console.log(req.body);
+
+		const result = await collection.updateOne(
+			{ email: req.query.email },
+			{ $set: req.body },
+		);
+		//console.log(req.query.firstName);
+
+		res.json(result);
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.patch("/updateDone", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAcounts").collection("acounts");
+		//const collection2 = client.db("allAnimals").collection("animals");
+
+		const email = req.query.email;
+		const animalId = Number(req.query.animalId);
+		const newValue = req.query.complete;
+
+		if (!Number.isInteger(animalId)) {
+			return res.status(400).json({ error: "Invalid animal ID" });
+		}
+
+		if (newValue !== "yes" && newValue !== "no") {
+			return res.status(400).json({
+				error: "complete must be either 'yes' or 'no'",
+			});
+		}
+
+		//const animalId = Number(req.query.animalId);
+		const completeField = complete${animalId};
+
+		const result = await collection.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: ${completeField} updated,
+			animalId: animalId,
+			[completeField]: newValue,
+		});
+
+		//const animal = await animal.findOne({ id: animalId });
+
+		/*if (!animal) {
+			return res.status(404).json({ error: "Animal not found" });
+		}*/
+
+		/*const result = await collection.updateOne({ email: email });
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		res.json({
+			message: "complete1 updated",
+			complete1: newValue,
+		});*/
+
+		// Create the field name, e.g. "complete7"
+		//const completeField = complete${animal.id};
+
+		// Update the account
+		/**const result = await accounts.updateOne(
+			{ email: email },
+			{
+				$set: {
+					[completeField]: newValue,
+				},
+			},
+		);*/
+
+		if (result.matchedCount === 0) {
+			return res.status(404).json({
+				error: "Account not found",
+			});
+		}
+
+		/*res.json({
+			message: ${completeField} updated,
+			animalId: animal.id,
+			[completeField]: newValue,
+		});*/
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.delete("/deleteAccount", async (req, res) => {
+	/*try {
+		await client.connect();
+
+		const { firstName, lastName, email, password } = req.body;
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ id: req.query.id });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.status(200).send(account);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get account", value: error });
+	}*/
+
+	console.log("DELETE route reached", req.query._id);
+	try {
+		const { _id } = req.query;
+
+		//const db = { firstName, lastName, _id, email, password };
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const result = await collection.deleteOne({ _id: new ObjectId(_id) });
+
+		if (result.deletedCount === 0)
+			return res.status(404).json({
+				message: "account not found",
+			});
+
+		res.status(200).json({ message: "Account deleted successfully" });
+	} catch (error) {
+		return res.status(500).json({
+			message: error.message,
+			code: error.code,
+			stack: error.stack,
+		});
+	}
+});
+
+app.get("/specificAnimal", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+
+		const animal = await collection.findOne({ animal: req.query.animal });
+
+		if (!animal) {
+			return res.status(404).send({ error: "Animal not found" });
+		}
+
+		res.status(200).send(animal);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get animal", value: error });
+	}
+});
+
+app.get("/allAnimals", async (req, res) => {
+	try {
+		await client.connect();
+
+		const collection = client.db("allAnimals").collection("animals");
+		const animals = await collection.find({}).toArray();
+
+		res.status(200).send(animals);
+	} catch (error) {
+		console.log(error);
+
+		res.status(500).send({ error: "Could not get all animals", value: error });
+	}
+});
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne({ email: req.query.email });
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
+});
+
+my backend index.js
+
+so, what else?
+
+Yes — looking at your current code, you're actually very close. The main password problem is now clear.
+
+You do not need to delete addUser, and you do not need to restructure your backend. Your current approach is fine for getting the project working.
+
+The one important thing you still need to fix
+
+You created this backend route:
+
+app.post("/login", async (req, res) => {
+
+and it correctly does:
+
+const passwordCorrect = await bcrypt.compare(password, account.password);
+
+But your frontend isn't calling /login.
+
+Your current getDataAccounts() calls:
+
+fetch("https://easy-animals.onrender.com/account", {
+    method: "POST",
+
+But your backend /account is:
+
+app.get("/account", async (req, res) => {
+
+So you're making a POST request to a GET route. That's the biggest remaining problem.
+
+1. Change only getDataAccounts()
+
+You can leave addUser exactly as it is.
+
+Replace your current getDataAccounts() with this:
+
+async function getDataAccounts() {
+	const email = emailInput.value;
+	const password = passwordInput.value;
+
+
+	if (!email || !password) {
+		alert("Please enter an email and password");
+		return;
+	}
+
+
+	try {
+		const response = await fetch("https://easy-animals.onrender.com/login", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({
+				email: email,
+				password: password,
+			}),
+		});
+
+
+		const data = await response.json();
+
+
+		if (!response.ok) {
+			alert(data.error || "Login failed");
+			return;
+		}
+
+
+		console.log("Login success");
+
+
+		localStorage.setItem("email", data.email);
+		window.location.href = "index2.html";
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+That's it.
+
+Why this fixes the password issue
+
+When creating an account, you do:
+
+const hashedPassword = await bcrypt.hash(password, 10);
+
+So MongoDB contains something like:
+
+password: "$2b$10$......."
+
+It doesn't contain the original password.
+
+Therefore this kind of comparison can never work:
+
+account.password === password
+
+Your new /login route correctly does:
+
+bcrypt.compare(password, account.password)
+
+So the flow becomes:
+
+User enters:
+email: test@test.com
+password: hello123
+
+
+        ↓
+
+
+frontend POST /login
+
+
+        ↓
+
+
+backend finds test@test.com
+
+
+        ↓
+
+
+bcrypt.compare("hello123", "$2b$10$...")
+
+
+        ↓
+
+
+correct?
+
+
+   YES ↓       ↓ NO
+        login   401
+
+That's exactly what you want.
+
+2. Keep addUser
+
+I agree with you here: don't delete it.
+
+Your existing:
+
+app.post("/addUser", async (req, res) => {
+
+is your registration route.
+
+Your new:
+
+app.post("/login", async (req, res) => {
+
+is your login route.
+
+They have different jobs, so having both is completely normal:
+
+/addUser  → create account
+/login    → log into account
+
+You don't need to combine them.
+
+3. Your architecture overlap isn't something I'd worry about right now
+
+You asked earlier whether it's a problem that some things overlap.
+
+For this project, if it works, I would leave it alone, especially given your time constraint.
+
+For example, you have:
+
+app.use(bodyParser.json());
+
+and later:
+
+app.use(express.json());
+
+Technically, that's redundant. You could clean it up eventually.
+
+But it isn't something I'd spend your remaining project time on.
+
+Same with things like:
+
+await client.connect();
+
+appearing in multiple routes. It's not the architecture I'd choose for a larger production application, but it's not the thing currently stopping your login from working.
+
+So I wouldn't touch it.
+
+4. There is one security problem I'd fix
+
+This one is more important than the architecture stuff.
+
+Your /complete route currently does:
+
+res.send(account);
+
+But account contains:
+
+{
+    email: "...",
+    password: "$2b$10$...",
+    complete1: "no",
+    ...
+}
+
+So your frontend's:
+
+const account = await fetch(
+    `https://easy-animals.onrender.com/complete?email=${encodeURIComponent(email)}`
+);
+
+
+const accountComplete = await account.json();
+
+is actually receiving the hashed password too.
+
+The hash isn't the user's actual password, so this doesn't mean their plain password is exposed. But there's no reason for the frontend to receive the hash.
+
+You could change /complete to:
+
+app.get("/complete", async (req, res) => {
+	try {
+		await client.connect();
+
+
+		const accounts = client.db("allAcounts").collection("acounts");
+		const account = await accounts.findOne(
+			{ email: req.query.email },
+			{
+				projection: {
+					password: 0,
+				},
+			},
+		);
+
+
+		if (!account) {
+			return res.status(404).send({ error: "Account not found" });
+		}
+
+
+		res.send(account);
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
+});
+
+Then the frontend still gets:
+
+complete1
+complete2
+complete3
+...
+
+but not:
+
+password
+However:
+
+If you are really under time pressure, this isn't what I'd call the main login fix. The /login change above is.
+
+5. One tiny bug in main.js
+
+You have:
+
+if (!email) {
+	window.location.href = "index2.html";
+	return;
+}
+
+inside updateComplete().
+
+That seems backwards.
+
+If there's no email, you presumably want to send the user to the login page, which from the rest of your code appears to be:
+
+index.html
+
+So:
+
+if (!email) {
+	window.location.href = "index.html";
+	return;
+}
+
+Your getData() already does this correctly:
+
+if (!email) {
+	window.location.href = "index.html";
+}
+
+I'd change the one in updateComplete() too.
+
+6. Also add the missing return in getData()
+
+Currently:
+
+if (!email) {
+	window.location.href = "index.html";
+}
+
+I'd make it:
+
+if (!email) {
+	window.location.href = "index.html";
+	return;
+}
+
+Otherwise JavaScript can continue executing the function after starting the redirect.
+
+Again, tiny fix.
+
+So your priority list
+
+If you don't want to change a lot, I'd do exactly these things:
+
+✅ Necessary
+
+1. Keep addUser
+
+Don't change it.
+
+2. Keep your new /login backend route
+
+It's correct.
+
+3. Change frontend getDataAccounts() to call /login instead of /account
+
+This is the important one.
+
+fetch("https://easy-animals.onrender.com/login", {
+
+instead of:
+
+fetch("https://easy-animals.onrender.com/account", {
+
+4. Test:
+
+Create new account
+Check MongoDB → password should be hashed
+Log out / go back to login
+Enter same email/password
+Login should work
+Enter wrong password → should say Incorrect email or password
+🟡 Good small fixes
+
+Change:
+
+window.location.href = "index2.html";
+
+to:
+
+window.location.href = "index.html";
+
+in updateComplete() when there is no email.
+
+And add return after the redirect in getData().
+
+🟢 Don't bother with these right now
+Rebuilding your architecture
+Removing addUser
+Rewriting all your login code
+Removing overlapping middleware
+Reorganizing all your routes
+Rewriting main.js
+Rewriting your account system
+
+You have a working registration system and a nearly-working login system. You only need to connect your frontend login button to the /login route you already created.
+
+And yes: #19 is still a nice addition 😄. The separation of /addUser and /login is actually a clean, understandable addition without requiring you to rebuild the rest of your project.

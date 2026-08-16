@@ -46,9 +46,12 @@ async function run() {
 		console.log(
 			"Pinged your deployment. You successfully connected to MongoDB!",
 		);
-	} finally {
+	} catch (error) {
+		//finally {
 		// Ensures that the client will close when you finish/error
-		await client.close();
+		//await client.close();
+		//}
+		console.error(error);
 	}
 }
 run().catch(console.dir);
@@ -68,13 +71,13 @@ app.listen(port, () => {
 });
 
 app.get("/", async (req, res) => {
-	try {
-		res.redirect("info.html");
+	//try {
+	res.redirect("info.html");
 
-		const buffer = await fs.readFile("", { encode: "utf8" });
-	} catch (error) {
-		res.status(500).send("Server error, try again later");
-	}
+	//const buffer = await fs.readFile("", { encode: "utf8" });
+	//} catch (error) {
+	//res.status(500).send("Server error, try again later");
+	//}
 });
 
 app.get("/account", async (req, res) => {
@@ -116,10 +119,10 @@ app.use(express.json());
 app.post("/addUser", async (req, res) => {
 	try {
 		const bcrypt = require("bcrypt");
-		const { firstName, lastName, email, password } = req.body;
+		const { /*firstName, lastName,*/ email, password } = req.body;
 		console.log(req.body);
 
-		if (!firstName || !lastName || !email || !password) {
+		if (/*!firstName || !lastName || */ !email || !password) {
 			//return res.status(400);
 			//.json({ error: "firstname, lastname, email and password required" });
 			return res.status(400).send("missing info");
@@ -134,6 +137,9 @@ app.post("/addUser", async (req, res) => {
 		if (existingUsers) {
 			return res.status(409).json({ error: "Email already exists" });
 		}
+		/*if (!existingUsers) {
+			return res.status(401).json({ error: "Incorrect email or password" });
+		}*/
 
 		//import bcrypt from "bcrypt";
 		console.log("hello2");
@@ -141,11 +147,11 @@ app.post("/addUser", async (req, res) => {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		await collection.insertOne({
-			firstName,
-			lastName,
+			//firstName,
+			//lastName,
 			email,
 			password: hashedPassword,
-			complete: "no",
+			complete1: "no",
 			complete2: "no",
 			complete3: "no",
 			complete4: "no",
@@ -166,6 +172,49 @@ app.post("/addUser", async (req, res) => {
 			message: error.message,
 			code: error.code,
 			stack: error.stack,
+		});
+	}
+});
+
+app.post("/login", async (req, res) => {
+	try {
+		const bcrypt = require("bcrypt");
+
+		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res.status(400).json({
+				error: "Email and password are required",
+			});
+		}
+
+		const collection = client.db("allAcounts").collection("acounts");
+
+		const account = await collection.findOne({ email });
+
+		if (!account) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+		const passwordCorrect = await bcrypt.compare(password, account.password);
+
+		if (!passwordCorrect) {
+			return res.status(401).json({
+				error: "Incorrect email or password",
+			});
+		}
+
+		res.status(200).json({
+			message: "Login successful",
+			email: account.email,
+		});
+	} catch (error) {
+		console.error(error);
+
+		res.status(500).json({
+			error: "Could not log in",
 		});
 	}
 });
@@ -265,7 +314,7 @@ app.patch("/updateDone", async (req, res) => {
 		//const animalId = Number(req.query.animalId);
 		const completeField = `complete${animalId}`;
 
-		const result = await accounts.updateOne(
+		const result = await collection.updateOne(
 			{ email: email },
 			{
 				$set: {
@@ -324,11 +373,11 @@ app.patch("/updateDone", async (req, res) => {
 			});
 		}
 
-		res.json({
+		/*res.json({
 			message: `${completeField} updated`,
 			animalId: animal.id,
 			[completeField]: newValue,
-		});
+		});*/
 	} catch (error) {
 		return res.status(500).json({
 			message: error.message,
@@ -424,7 +473,10 @@ app.get("/complete", async (req, res) => {
 		await client.connect();
 
 		const accounts = client.db("allAcounts").collection("acounts");
-		const account = await accounts.findOne({ email: req.query.email });
+		const account = await accounts.findOne(
+			{ email: req.query.email },
+			{ projection: { password: 0 } },
+		);
 
 		if (!account) {
 			return res.status(404).send({ error: "Account not found" });
