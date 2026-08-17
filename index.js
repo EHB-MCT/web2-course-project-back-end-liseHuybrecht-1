@@ -68,17 +68,17 @@ app.listen(port, () => {
 	console.log(`GET /acounts - Get all acounts`);
 	//console.log(` MONGO_URI: ${process.env.MONGODB_URI}`);
 	//console.log(process.env.YOUR_VARIABLE_NAME);
-	console.log("  ,");
-	console.log("  o>");
-	console.log("`__)");
+	console.log("   ,");
+	console.log(" ( o)>");
+	console.log("`___)");
 });
 
 app.get("/", async (req, res) => {
 	//try {
 	res.redirect("info.html");
-	console.log("  ,");
-	console.log("  o>");
-	console.log("`__)");
+	console.log("   ,");
+	console.log(" ( o)>");
+	console.log("`___)");
 
 	//const buffer = await fs.readFile("", { encode: "utf8" });
 	//} catch (error) {
