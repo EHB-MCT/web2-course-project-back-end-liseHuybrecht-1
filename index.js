@@ -71,6 +71,9 @@ app.listen(port, () => {
 	console.log("   ,");
 	console.log(" ( o)>");
 	console.log("`___)");
+	console.log("   ,");
+	console.log("<(o )");
+	console.log(" (___/");
 });
 
 app.get("/", async (req, res) => {
